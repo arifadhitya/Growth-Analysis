@@ -1,0 +1,18 @@
+.profile-pic {
+    height: 100px;
+    width: auto;
+}
+
+.bg-purplex {
+    background-color: #7B18CA;
+}
+
+body {
+    font-family: 'Poppins', sans-serif !important;
+    background-color: #F8F9FA;
+  }
+
+.sidebar{
+    height: 100%;
+    background-color: #272822;
+}
