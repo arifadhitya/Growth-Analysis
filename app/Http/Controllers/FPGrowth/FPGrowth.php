@@ -1,99 +1,177 @@
 <?php
-namespace FPGrowth;
 
-use FPGrowth\Base\FPNode;
-use FPGrowth\Base\FPTree;
+namespace App\Http\Controllers\FPGrowth;
 
-class  FPGrowth
+class FPGrowth
 {
+    protected $support = 3;
+    protected $confidence = 0.7;
 
-    private function conditionalTreeFromPaths($paths)
+    private $patterns;
+    private $rules;
+
+    /**
+     * @return mixed
+     */
+    public function getSupport()
     {
-        $tree = new FPTree();
-        $conditionItem = null;
-        $items = [];
-        foreach ($paths as $path) {
-            if (empty($conditionItem)) {
-                $p = $path[count($path) -1];
-                $conditionItem = $p->getItem();
-            }
-            $point = $tree->getRoot();
-            foreach ($path as $node) {
-                $nextPoint = $node->search($node->getItem());
-                if (empty($nextPoint)) {
-                    $items[] = $node->getItem();
-                    $count = $node->getItem() == $conditionItem ? $node->getCount() : 0;
-                    $nextPoint = new FPNode($tree, $node->getItem(), $count);
-                    $point->add($nextPoint);
-                    $tree->updateRoute($nextPoint);
-                }
-                $point = $nextPoint;
-            }
-        }
-        if (empty($conditionItem)) {
-            throw  new \Exception('condition tree is wrong');
-        }
-        foreach ($tree->prefixPaths($conditionItem) as $path) {
-            $p = array_pop($path);
-            $count = $p->getCount();
-            foreach (array_reverse($path) as $node) {
-                $node->setCount($count);
-            }
-        }
-
-        return $tree;
+        return $this->support;
     }
 
-    private function findWithSuffix($tree, $suffix, $minimum, $includeSupport)
+    /**
+     * @param mixed $support
+     */
+    public function setSupport($support)
     {
-        foreach ($tree->getItems() as $item => $nodes) {
-            $support = 0;
-            foreach ($nodes as $v) {
-                $support += $v->getCount();
-            }
-            if ($support >= $minimum && !isset($suffix[$item])) {
-                $foundSet = [$item, $suffix];
-                yield $includeSupport ? [$foundSet, $support] : $foundSet;
-                $condTree = $this->conditionalTreeFromPaths($tree->prefixPaths($item));
-                foreach ($this->findWithSuffix($condTree, $foundSet, $minimum, $includeSupport) as $v) {
-                    yield $v;
-                }
-
-            }
-        }
+        $this->support = $support;
+        return $this;
     }
 
-    public function findFrequentItemSets($transactions, $minimum, $includeSupport = false)
+    /**
+     * @return mixed
+     */
+    public function getConfidence()
     {
-        $items = [];
-        foreach ($transactions as $v) {
-            foreach ($v as $v1) {
-                $items[$v1] = isset($items[$v1]) ? $items[$v1] + 1 : 1;
-            }
-        }
-        foreach ($items as $k => $v) {
-            if ($v < $minimum) {
-                unset($items[$k]);
-            }
-        }
-        $cleanTransaction = function ($transaction) use ($items) {
-            $ret = [];
-            foreach ($transaction as $v) {
-                if (isset($items[$v])) {
-                    $ret[$v] = $items[$v];
+        return $this->confidence;
+    }
+
+    /**
+     * @param mixed $confidence
+     */
+    public function setConfidence($confidence)
+    {
+        $this->confidence = $confidence;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPatterns()
+    {
+        return $this->patterns;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    /**
+     * FPGrowth constructor.
+     * @param $support 1, 2, 3 ...
+     * @param $confidence 0 ... 1
+     */
+    public function __construct($support, $confidence)
+    {
+        $this->support = $support;
+        $this->confidence = $confidence;
+    }
+
+    /**
+     * Do algorithm
+     * @param $transactions
+     */
+    public function run($transactions)
+    {
+        $this->patterns = $this->findFrequentPatterns($transactions, $this->support);
+        $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
+    }
+
+    protected function findFrequentPatterns($transactions, $support_threshold)
+    {
+        $tree = new FPTree($transactions, $support_threshold, null, null);
+        return $tree->minePatterns($support_threshold);
+    }
+
+    protected function generateAssociationRules($patterns, $confidence_threshold)
+    {
+        $rules = [];
+        foreach (array_keys($patterns) as $itemsetStr) {
+            $itemset = explode(',', $itemsetStr);
+            $upper_support = $patterns[$itemsetStr];
+            for ($i = 1; $i < count($itemset); $i++) {
+                foreach (self::combinations($itemset, $i) as $antecedent) {
+                    sort($antecedent);
+                    $antecedentStr = implode(',', $antecedent);
+                    $consequent = array_diff($itemset, $antecedent);
+                    sort($consequent);
+                    $consequentStr = implode(',', $consequent);
+                    if (isset($patterns[$antecedentStr])) {
+                        $lower_support = $patterns[$antecedentStr];
+                        $confidence = (floatval($upper_support) / $lower_support);
+                        if ($confidence >= $confidence_threshold) {
+                            $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                        }
+                    }
                 }
             }
-            arsort($ret);
-
-            return array_keys($ret);
-        };
-        $master = new FPTree();
-        foreach ($transactions as $v) {
-            $master->add($cleanTransaction($v));
         }
-        $master->inspect();
-        foreach ($this->findWithSuffix($master, [], $minimum, $includeSupport) as $v) {
-            yield $v;
+        return $rules;
+    }
+
+    public static function iter($var)
+    {
+
+        switch (true) {
+            case $var instanceof \Iterator:
+                return $var;
+
+            case $var instanceof \Traversable:
+                return new \IteratorIterator($var);
+
+            case is_string($var):
+                $var = str_split($var);
+
+            case is_array($var):
+                return new \ArrayIterator($var);
+
+            default:
+                $type = gettype($var);
+                throw new \InvalidArgumentException("'$type' type is not iterable");
+        }
+
+        return ;
+    }
+
+    public static function combinations($iterable, $r)
+    {
+        $pool = is_array($iterable) ? $iterable : iterator_to_array(self::iter($iterable));
+        $n = sizeof($pool);
+
+        if ($r > $n) {
+            return;
+        }
+
+        $indices = range(0, $r - 1);
+        yield array_slice($pool, 0, $r);
+
+        for (; ;) {
+            for (; ;) {
+                for ($i = $r - 1; $i >= 0; $i--) {
+                    if ($indices[$i] != $i + $n - $r) {
+                        break 2;
+                    }
+                }
+
+                return;
+            }
+
+            $indices[$i]++;
+
+            for ($j = $i + 1; $j < $r; $j++) {
+                $indices[$j] = $indices[$j - 1] + 1;
+            }
+
+            $row = [];
+            foreach ($indices as $i) {
+                $row[] = $pool[$i];
+            }
+
+            yield $row;
         }
     }
 }
