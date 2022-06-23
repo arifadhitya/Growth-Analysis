@@ -85,7 +85,18 @@ class AnalisisController extends Controller
 
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
-        //dd($transaksiPembelian);
+
+
+        foreach($rules as $index=>$aturan){
+            foreach($aturan as $indexX=>$aturanX){
+                if (is_string($aturanX)){
+                    $rules[$index][$indexX] = explode(',', $aturanX);
+                }
+
+                // $aturanX[0] = explode(',', $rules[$aturanX]);
+                // $aturanX[1] = explode(',', $patterns[1]);
+            }
+        }
 
         return view('dashboard/analisis/result', [
             'transaksiPembelian' => $transaksiPembelian,

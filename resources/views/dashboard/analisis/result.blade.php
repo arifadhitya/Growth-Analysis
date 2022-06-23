@@ -28,11 +28,13 @@
             <div class="col rounded float my-auto">
                 <div class="row">
                     @foreach ($rls[0] as $r)
-                    {{ $namaProduk[$r] }}
+                    {{ $namaProduk[$r] }} <br>
                     @endforeach
                 </div>
                 <div class="row">
-                    {{ $rls[1] }}
+                    @foreach ($rls[1] as $r)
+                    {{ $namaProduk[$r] }} <br>
+                    @endforeach
                 </div>
             </div>
     </div>
