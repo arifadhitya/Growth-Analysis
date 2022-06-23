@@ -61,3 +61,5 @@ Route::post('/staf/{staf}/hapus',[UserController::class, 'destroy']);
 // Route Menu Analisis
 Route::get('/analisis', [AnalisisController::class, 'index']);
 Route::post('/analisisproduk', [AnalisisController::class, 'fpgrowth']);
+//Route::post('/analisis/result', [AnalisisController::class, 'fpgrowth']);
+

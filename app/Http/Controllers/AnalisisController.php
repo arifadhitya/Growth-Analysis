@@ -37,83 +37,62 @@ class AnalisisController extends Controller
         $request['jangkaWaktuAnalisis1'] = date('Y-m-d', $newDateFormat1);
         $request['jangkaWaktuAnalisis2'] = date('Y-m-d', $newDateFormat2);
 
+        $transaksiPembelian=array();
+        $namaProduk=array();
+
         // Mengambil record antara jangka waktu
-        $getRecordRange = Pembelian::whereBetween('tanggaltransaksi', [
+        $getRecordRange = DB::table('transaksis')->whereBetween('tanggaljual', [
             $request['jangkaWaktuAnalisis1'],
             Carbon::parse($request['jangkaWaktuAnalisis2'])->endOfDay(),
         ])->get();
 
-        // Perulangan masing-masing record
-        // foreach ($getRecordRange as $transaksi => $value){
-
-        //     $hitungItemset = Pembelian::where('kodetransaksi', $value->kodetransaksi)->count();
-
-        //     //kalau jumlah itemset lebih dari atau sama dengan minimum confidence
-        //     if($hitungItemset >= $minConf){
-
-        //         //masukkan ke tabel analisis
-        //         Analisis::create([
-        //             'kodetransaksi'=>$value->kodetransaksi,
-        //             'totalbayar'=>$value->totalbayar,
-        //             'tanggaltransaksi'=>$value->tanggaltransaksi,
-        //             'kodeproduk'=>$value->kodeproduk,
-        //             'jumlahproduk'=>$value->jumlahproduk,
-        //         ]);
-        //     }
-        //     //isi dalam tabel analisis sesuai range
-
-        // }
-        // $tran = DB::table('transaksis')->limit(10)->get();
-        $tran = DB::table('transaksis')->whereBetween('tanggaljual', [
-            $request['jangkaWaktuAnalisis1'],
-            Carbon::parse($request['jangkaWaktuAnalisis2'])->endOfDay(),
-        ])->get('kodetransaksi');
-
-        // $fpgrowth = new FPGrowth();
-        $tampung=array();
-        foreach ($tran as $transaksi => $value) {
+        // Memasukkan kodeproduk ke array kodetransaksi
+        foreach ($getRecordRange as $transaksi => $value) {
             $dettran = DB::table('pembelians')->where('kodetransaksi', $value->kodetransaksi)->get();
+
             //array_push($tampung, $value->kodetransaksi);
             $x=array();
+            $y=array();
             foreach ($dettran as $transaksi => $value){
+                $produk = DB::table('produks')->where('kodeproduk', $value->kodeproduk)->first();
+                $namaProduk[$value->kodeproduk] = $produk->namaproduk;
+                array_push($y, $produk->namaproduk);
                 array_push($x, $value->kodeproduk);
             }
-            $tampung[$value->kodetransaksi] = $x;
+            $transaksiPembelian[$value->kodetransaksi] = $x;
+
+
         }
-        // $tampung=array();
-        // foreach ($tran as $transaksi => $value) {
+
+        // foreach ($getRecordRange as $transaksi => $value) {
         //     $dettran = DB::table('pembelians')->where('kodetransaksi', $value->kodetransaksi)->get();
-        //     foreach ($dettran as $transaksi => $value) {
-        //         $tampung[$value->kodetransaksi] = array($value->kodeproduk);
+        //     $produk = DB::table('produks')->where('kodeproduk', $value->kodeproduk)->get();
+        //     dd($transaksi);
+        //     $y=array();
+        //     foreach ($produk as $kodpro => $value){
+        //         array_push($y, $value->namaproduk);
+        //         dd($produk);
         //     }
-        //     //$fpgrowth->set($tampung);
+        //     $transaksiPembelian[$value->kodetransaksi] = $x;
         // }
 
-        //dd($tran);
 
-
-
-        $transactions = [
-            ['M', 'O', 'N', 'K', 'E', 'Y'],
-            ['D', 'O', 'N', 'K', 'E', 'Y'],
-            ['M', 'A', 'K', 'E'],
-            ['M', 'U', 'C', 'K', 'Y'],
-            ['C', 'O', 'O', 'K', 'I', 'E'],
-        ];
-
-        $support = $minSupp;
         $confidence = 0.7;
 
-        $fpgrowth = new FPGrowth($support, $confidence);
+        $fpgrowth = new FPGrowth($minSupp, $confidence);
 
-        $fpgrowth->run($tampung);
+        $fpgrowth->run($transaksiPembelian);
 
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
+        //dd($transaksiPembelian);
 
-        dd($rules);
-
-
+        return view('dashboard/analisis/result', [
+            'transaksiPembelian' => $transaksiPembelian,
+            'namaProduk' => $namaProduk,
+            'patterns' => $patterns,
+            'rules' => $rules,
+        ]);
     }
 }
 

@@ -17,10 +17,12 @@ class FPTree extends stdClass
     }
 
     /**
-     * Create a dictionary of items with occurrences above the threshold.
+     * Mencari frekuensi produk dalam transaksi, pruning, dan sorting dari besar ke kecil
      */
     protected static function findFrequentItems($transactions, $threshold)
     {
+
+        // frekuensi dari produk yang terbeli
         $items = [];
         foreach ($transactions as $transaction) {
             foreach ($transaction as $item) {
@@ -32,34 +34,42 @@ class FPTree extends stdClass
             }
         }
 
+        // hilangkan jika frekuensi produk kurang dari minimum support dan urutkan
         foreach (array_keys($items) as $key) {
             if (($items[$key] < $threshold)) {
                 unset($items[$key]);
             }
         }
         arsort($items);
+
         return $items;
     }
 
     /**
-     * Build the header table.
+     * Membuat header
      */
     protected static function buildHeaderTable($frequent)
     {
+        // menghapus value dari key array frequent
         $headers = [];
         foreach (array_keys($frequent) as $key) {
             $headers[$key] = null;
         }
+
         return $headers;
     }
 
     /**
-     * Build the FP tree and return the root node.
+     * Membuat fptree dan mengembalikan node root
      */
     protected function buildFPTree(&$transactions, &$root_value, &$root_count, &$frequent, &$headers)
     {
+        // membuat node null
         $root = new FPNode($root_value, $root_count, null);
+
         arsort($frequent);
+
+        // memasukkan ke dalam tree
         foreach ($transactions as $transaction) {
             $sorted_items = [];
             foreach ($transaction as $item) {
@@ -67,11 +77,15 @@ class FPTree extends stdClass
                     $sorted_items[] = $item;
                 }
             }
+
+            // membandingkan a dan b dan mengembalikan nilai true atau false
             usort($sorted_items, function ($a, $b) use ($frequent) {
                 return $frequent[$a] == $frequent[$b] ? 0 : (
                 $frequent[$a] > $frequent[$b] ? -1 : 1
                 );
             });
+
+            // jika jumlah sorted_item lebih besar dari 0 maka kirimkan dan jalankan insertTree
             if (count($sorted_items) > 0) {
                 $this->insertTree($sorted_items, $root, $headers);
             }
@@ -80,7 +94,7 @@ class FPTree extends stdClass
     }
 
     /**
-     * Recursively grow FP tree.
+     * FP tree rekursif
      */
     protected function insertTree(&$items, &$node, &$headers)
     {
