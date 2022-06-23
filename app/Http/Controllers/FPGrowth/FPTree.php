@@ -98,14 +98,19 @@ class FPTree extends stdClass
      */
     protected function insertTree(&$items, &$node, &$headers)
     {
+        // memasukkan items pertama ke first
         $first = $items[0];
+
+        // memasukkan child dari first ke dalam $child
         $child = $node->get_child($first);
+
+        // jika child tidak kosong maka child->count +1 atau membuat child baru dari first
         if (($child != null)) {
             $child->count += 1;
         } else {
-            // Add new child
+            // menambah child baru dari first
             $child = $node->add_child($first);
-            // Link it to header structure.
+            // menyambungkan ke header
             if ($headers[$first] == null) {
                 $headers[$first] = $child;
             } else {
@@ -116,15 +121,17 @@ class FPTree extends stdClass
                 $current->link = $child;
             }
         }
-        // Call function recursively.
+
         $remaining_items = array_slice($items, 1, null);
+
+        // jika item yang tertinggal lebih besar dari 0 maka masukkan dan jalankan insertTree
         if (count($remaining_items) > 0) {
             $this->insertTree($remaining_items, $child, $headers);
         }
     }
 
     /**
-     * If there is a single path in the tree,
+     * Mengecek apakah tree cuma punya 1 jalur dibawahnya
      * return true, else return false.
      */
     protected function treeHasSinglePath($node)
@@ -140,10 +147,11 @@ class FPTree extends stdClass
     }
 
     /**
-     * Mine the constructed FP tree for frequent patterns.
+     * Mine fp-tree
      */
     public function minePatterns($threshold)
     {
+        // jika tree hanya punya 1 jalur dibawahnya atau hanya punya 1 child
         if ($this->treeHasSinglePath($this->root)) {
             return $this->generatePatternList();
         } else {
@@ -152,8 +160,8 @@ class FPTree extends stdClass
     }
 
     /**
-     * Append suffix to patterns in dictionary if
-     * we are in a conditional FP tree.
+     * Tambahkan suffix menuju node,
+     * conditional fptree.
      */
     protected function zipPatterns($patterns)
     {
@@ -173,13 +181,13 @@ class FPTree extends stdClass
     }
 
     /**
-     * Generate a list of patterns with support counts.
+     * Generate patterns dengan nilai support.
      */
     protected function generatePatternList()
     {
         $patterns = [];
         $items = array_keys($this->frequent);
-        // If we are in a conditional tree, the suffix is a pattern on its own.
+        // Mengecek apakah dalam conditional fptree, maka suffix adalah dirinya sendiri.
         if ($this->root->value == null) {
             $suffix_value = [];
         } else {

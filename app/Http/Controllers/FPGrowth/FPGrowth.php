@@ -137,6 +137,7 @@ class FPGrowth
         return ;
     }
 
+    //
     public static function combinations($iterable, $r)
     {
         $pool = is_array($iterable) ? $iterable : iterator_to_array(self::iter($iterable));
