@@ -12,6 +12,9 @@ use Illuminate\Foundation\Auth\User;
 
 use App\Http\Controllers\FPGrowth\FPGrowth;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 class AnalisisController extends Controller
 {
     public function index()
@@ -47,19 +50,20 @@ class AnalisisController extends Controller
         ])->get();
 
         // Memasukkan kodeproduk ke array kodetransaksi
-        foreach ($getRecordRange as $transaksi => $value) {
-            $dettran = DB::table('pembelians')->where('kodetransaksi', $value->kodetransaksi)->get();
+        foreach ($getRecordRange as $transaksi1 => $value1) {
+            $dettran = DB::table('pembelians')->where('kodetransaksi', $value1->kodetransaksi)->get();
 
             //array_push($tampung, $value->kodetransaksi);
             $x=array();
             $y=array();
-            foreach ($dettran as $transaksi => $value){
-                $produk = DB::table('produks')->where('kodeproduk', $value->kodeproduk)->first();
-                $namaProduk[$value->kodeproduk] = $produk->namaproduk;
+            foreach ($dettran as $transaksi2 => $value2){
+                $produk = DB::table('produks')->where('kodeproduk', $value2->kodeproduk)->first();
+                $namaProduk[$value2->kodeproduk] = $produk->namaproduk;
                 array_push($y, $produk->namaproduk);
-                array_push($x, $value->kodeproduk);
+                array_push($x, $value2->kodeproduk);
+                $transaksiPembelian[$transaksi1] = $x;
             }
-            $transaksiPembelian[$value->kodetransaksi] = $x;
+
 
 
         }
@@ -77,14 +81,57 @@ class AnalisisController extends Controller
         // }
 
 
-        $confidence = 0.7;
+
+        $confidence = 0.5;
 
         $fpgrowth = new FPGrowth($minSupp, $confidence);
+        $transactions = [
+            // ['I1', 'I2', 'I5'],
+            // ['I2', 'I4'],
+            // ['I2', 'I3'],
+            // ['I1', 'I2', 'I4'],
+            // ['I1', 'I3'],
+            // ['I2', 'I3'],
+            // ['I1', 'I3'],
+            // ['I1', 'I2', 'I3', 'I5'],
+            // ['I1', 'I2', 'I3'],
 
-        $fpgrowth->run($transaksiPembelian);
+            ['I1', 'I2', 'I5'],
+            ['I2', 'I4'],
+            ['I2', 'I3'],
+            ['I1', 'I2', 'I4'],
+            ['I1', 'I3'],
+            ['I2', 'I3'],
+            ['I1', 'I3'],
+            ['I1', 'I2', 'I3', 'I5'],
+            ['I1', 'I2', 'I3'],
+
+            // ['M', 'O', 'N', 'K', 'E', 'Y'],
+            // ['D', 'O', 'N', 'K', 'E', 'Y'],
+            // ['M', 'A', 'K', 'E'],
+            // ['M', 'U', 'C', 'K', 'Y'],
+            // ['C', 'O', 'O', 'K', 'I', 'E']
+        ];
+
+         //dd(count($transaksiPembelian));
+        //$fpgrowth->run($transactions);
+         $fpgrowth->run($transaksiPembelian);
 
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
+        //dd($transaksiPembelian);
+
+        // .$transaksiPembelian." ".$minConf." ".$confidence
+        $process = new Process(['python', '/main.py']);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        //$executePythexec($executePyth, $output, $ret_code);
+        $outp=$process->getOutput();
+        //dd($rules);
 
 
         foreach($rules as $index=>$aturan){

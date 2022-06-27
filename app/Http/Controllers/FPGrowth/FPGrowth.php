@@ -4,8 +4,8 @@ namespace App\Http\Controllers\FPGrowth;
 
 class FPGrowth
 {
-    protected $support = 3;
-    protected $confidence = 0.7;
+    // protected $support = 0;
+    // protected $confidence = 0;
 
     private $patterns;
     private $rules;
@@ -84,6 +84,7 @@ class FPGrowth
     protected function findFrequentPatterns($transactions, $support_threshold)
     {
         $tree = new FPTree($transactions, $support_threshold, null, null);
+        // dd($tree);
         return $tree->minePatterns($support_threshold);
     }
 
@@ -103,13 +104,18 @@ class FPGrowth
                     if (isset($patterns[$antecedentStr])) {
                         $lower_support = $patterns[$antecedentStr];
                         $confidence = (floatval($upper_support) / $lower_support);
+                        dd($patterns);
                         if ($confidence >= $confidence_threshold) {
                             $rules[] = [$antecedentStr, $consequentStr, $confidence];
                         }
+
+
                     }
                 }
             }
+
         }
+
         return $rules;
     }
 
@@ -174,5 +180,7 @@ class FPGrowth
 
             yield $row;
         }
+        //dd(combinations($iterable, $r));
     }
+
 }

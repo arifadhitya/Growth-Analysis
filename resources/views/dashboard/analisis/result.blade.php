@@ -20,25 +20,33 @@
 
 <div class="card w-50">
     <div class="card-body row ">
-            <div class="col-3 rounded float my-auto">
-                <div class="row-2  fs-3 fw-bold">
-                    {{ round((float)$rls[2] * 100 ) . '%' }}
-                </div>
+        <div class="col-3 rounded float my-auto">
+            <div class="row-2  fs-3 fw-bold">
+                {{ round((float)$rls[2] * 100 ) . '%' }}
+                {{-- {{ $rls[2] }} --}}
+                {{-- @if ($rls[2] > 1)
+                  {{ 1 }}
+                  @else
+                  {{ $rls[2] }}
+                  @endif --}}
             </div>
-            <div class="col rounded float my-auto">
-                <div class="row">
-                    @foreach ($rls[0] as $r)
-                    {{ $namaProduk[$r] }} <br>
-                    @endforeach
-                </div>
-                <div class="row">
-                    @foreach ($rls[1] as $r)
-                    {{ $namaProduk[$r] }} <br>
-                    @endforeach
-                </div>
+        </div>
+        <div class="col rounded float my-auto">
+            <div class="row">
+                Jika membeli<br>
+                @foreach ($rls[0] as $r)
+                {{ $namaProduk[$r] }} <br>
+                @endforeach
             </div>
+            <div class="row">
+                Maka membeli<br>
+                @foreach ($rls[1] as $r)
+                {{ $namaProduk[$r] }} <br>
+                @endforeach
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 
 @endforeach
 

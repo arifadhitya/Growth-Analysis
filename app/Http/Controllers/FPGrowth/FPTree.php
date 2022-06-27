@@ -41,7 +41,6 @@ class FPTree extends stdClass
             }
         }
         arsort($items);
-
         return $items;
     }
 
