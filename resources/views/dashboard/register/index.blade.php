@@ -50,7 +50,7 @@
 
 
 
-<main class="form-signin">
+<main class="form-signup">
   @if(session()->has('success'))
     <div class="alert alert-success alert-dismissable fade show" role="alert">
         {{ session('success') }}
@@ -58,33 +58,43 @@
     </div>
   @endif
 
-  <form action="/login" method="post">
-      @csrf
-    <!-- <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-    <h1 class="h3 mb-3 fw-normal">Masuk</h1>
-    @if(session()->has('loginError'))
-    <div class="alert alert-danger alert-dismissable fade show" role="alert">
-        {{ session('loginError') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  @endif
-    <div class="form-floating">
-      <input type="text" class="form-control" name="username" id="username" placeholder="Masukkan Nama Pengguna" required autofocus value="{{ old('username') }}">
-      <label for="username">Nama Pengguna</label>
-    </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan Kata Sandi" required>
-      <label for="password">Kata Sandi</label>
-    </div>
+  <div class=" justify-content-center">
+    <form action="/daftar" method="post">
+        @csrf
+      <!-- <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
+      <h1 class="h3 mb-3 fw-normal">Daftar Pengguna</h1>
+      @if(session()->has('loginError'))
+      <div class="alert alert-danger alert-dismissable fade show" role="alert">
+          {{ session('loginError') }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    @endif
+      <div class="form-floating">
+          <input type="text" class="form-control" name="kodepegawai" id="kodepegawai" placeholder="Kode Pegawai" required value="{{ old('kodepegawai') }}">
+          <label for="kodepegawai">Kode Pegawai</label>
+      </div>
+      <div class="form-floating">
+          <input type="text" class="form-control" name="namapegawai" id="namapegawai" placeholder="Nama Lengkap" required value="{{ old('namapegawai') }}">
+          <label for="kodepegawai">Nama Lengkap</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control" name="username" id="username" placeholder="Username" required value="{{ old('username') }}">
+        <label for="username">Username</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control" placeholder="Kata Sandi" name="password" id="password" required>
+        <label for="password">Kata Sandi</label>
+      </div>
+  </div>
+
 
     {{-- <div class="checkbox mb-3">
       <label>
         <input type="checkbox" value="remember-me"> Remember me
       </label>
     </div> --}}
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Masuk</button>
+    <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Daftar</button>
   </form>
-  <small class="d-block text-center mt-3">Belum terdaftar ? <a href="/daftar">daftar disini</a></small>
   <p class="mt-5 mb-3 text-muted">&copy; 2022 - @arifadhitya</p>
 </main>
 

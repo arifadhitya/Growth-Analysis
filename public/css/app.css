@@ -7,6 +7,16 @@
     background-color: #7B18CA;
 }
 
+.btn-outline-purple {
+    color: #fff;
+    border-color: #fff;
+}
+.btn-outline-purple:hover {
+    color: #7B18CA;
+    background-color: #fff;
+    border-color: #7B18CA;
+}
+
 body {
     font-family: 'Poppins', sans-serif !important;
     background-color: #F8F9FA;

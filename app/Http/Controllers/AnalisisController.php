@@ -8,7 +8,6 @@ use App\Models\Pembelian;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Auth\User;
 
 use App\Http\Controllers\FPGrowth\FPGrowth;
 

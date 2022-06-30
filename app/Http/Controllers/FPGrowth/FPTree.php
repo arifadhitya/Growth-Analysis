@@ -136,6 +136,7 @@ class FPTree extends stdClass
     protected function treeHasSinglePath($node)
     {
         $num_children = count($node->children);
+
         if (($num_children > 1)) {
             return false;
         } else if (($num_children == 0)) {
@@ -165,6 +166,7 @@ class FPTree extends stdClass
     protected function zipPatterns($patterns)
     {
         $suffix = $this->root->value;
+        //dd($suffix);
         if ($suffix != null) {
             // We are in a conditional tree.
             $new_patterns = [];
@@ -207,6 +209,7 @@ class FPTree extends stdClass
                 $patterns[implode(',', $pattern)] = $min;
             }
         }
+        //dd($patterns);
         return $patterns;
     }
 
@@ -254,6 +257,7 @@ class FPTree extends stdClass
                 }
             }
         }
+        //dd($patterns);
         return $patterns;
     }
 }

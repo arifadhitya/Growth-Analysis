@@ -18,11 +18,12 @@
 
 @foreach ($rules as $rls)
 
-<div class="card w-50">
+<div class="card w-50 mb-2">
     <div class="card-body row ">
-        <div class="col-3 rounded float my-auto">
-            <div class="row-2  fs-3 fw-bold">
-                {{ round((float)$rls[2] * 100 ) . '%' }}
+        <div class="col-3 float my-auto">
+            <div class="row-2 ms-2 fs-3 fw-light">
+                <span class="fw-bold">{{ round((float)$rls[2] * 100 ) . '%' }}</span>
+                <p class="fs-6 mb-0">Pelanggan</p>
                 {{-- {{ $rls[2] }} --}}
                 {{-- @if ($rls[2] > 1)
                   {{ 1 }}
@@ -33,16 +34,24 @@
         </div>
         <div class="col rounded float my-auto">
             <div class="row">
-                Jika membeli<br>
-                @foreach ($rls[0] as $r)
-                {{ $namaProduk[$r] }} <br>
-                @endforeach
+                <div class="row fw-light">
+                    yang membeli
+                </div>
+                <div class="row fw-bold">
+                    @foreach ($rls[0] as $r)
+                    {{ $namaProduk[$r] }} <br>
+                    @endforeach
+                </div>
             </div>
             <div class="row">
-                Maka membeli<br>
-                @foreach ($rls[1] as $r)
-                {{ $namaProduk[$r] }} <br>
-                @endforeach
+                <div class="row fw-light">
+                    akan membeli
+                </div>
+                <div class="row fw-bold">
+                    @foreach ($rls[1] as $r)
+                    {{ $namaProduk[$r] }}
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

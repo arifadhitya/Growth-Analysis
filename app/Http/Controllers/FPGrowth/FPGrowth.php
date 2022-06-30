@@ -97,17 +97,28 @@ class FPGrowth
             for ($i = 1; $i < count($itemset); $i++) {
                 foreach (self::combinations($itemset, $i) as $antecedent) {
                     sort($antecedent);
+                    //dd($itemset);
                     $antecedentStr = implode(',', $antecedent);
                     $consequent = array_diff($itemset, $antecedent);
                     sort($consequent);
                     $consequentStr = implode(',', $consequent);
                     if (isset($patterns[$antecedentStr])) {
+                        //$itemsetStr2 = implode(',', $itemset);
+                        //$upper_support = $patterns[$itemsetStr2];
                         $lower_support = $patterns[$antecedentStr];
-                        $confidence = (floatval($upper_support) / $lower_support);
-                        dd($patterns);
+                        // dd($upper_support);
+                        $confidence = (floatval($upper_support) / $lower_support); // LOWER SUPPORT BERUBAH
+
                         if ($confidence >= $confidence_threshold) {
                             $rules[] = [$antecedentStr, $consequentStr, $confidence];
                         }
+
+                        // if($upper_support <= $lower_support){
+                        //     $confidence = (floatval($upper_support) / $lower_support);
+                        //     if ($confidence >= $confidence_threshold) {
+                        //         $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                        //     }
+                        // }
 
 
                     }
