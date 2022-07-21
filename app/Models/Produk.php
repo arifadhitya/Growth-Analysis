@@ -19,6 +19,13 @@ class Produk extends Model
         'hargajual',
     ];
 
+    public function scopePencarian($query, array $filters){
+        $query->when($filters['search'] ?? false, function($query, $search){
+            return $query->where('namaproduk', 'like', '%' . $search . '%')
+                        ->orWhere('kodeproduk', 'like', '%' . $search . '%');
+        });
+    }
+
     public function pembelian(){
         //return $this->belongsTo(Pembelian::class);
         return $this->hasMany(Pembelian::class);

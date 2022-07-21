@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Ubah Data Produk {{ $produk->kodeproduk }}</h1>
+    <h1 class="judul-page">Ubah Data Produk {{ $produk->kodeproduk }}</h1>
 
 </div>
         <form action="/produk/{{ $produk->id }}" method="POST" accept-charset="UTF-8">
@@ -11,7 +11,7 @@
             <div class="mb-3">
                 <label for="kodeproduk" class="form-label">Kode Produk</label>
                 <input type="text" class="form-control @error('kodeproduk') is-invalid @enderror" id="kodeproduk"
-                name="kodeproduk" required autofocus value="{{ old('kodeproduk', $produk->kodeproduk) }}">
+                name="kodeproduk" required autofocus value="{{ old('kodeproduk', $produk->kodeproduk) }}" disabled>
                 @error('kodeproduk')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -54,8 +54,8 @@
                     </div>
                 @enderror
             </div>
-            <a href="/produk" class="btn btn-secondary" role="button">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <a href="/produk" class="btn btn-rv" role="button">Batal</a>
+            <button type="submit" class="btn btn-rvr">Simpan</button>
         </form>
     </div>
     </div>

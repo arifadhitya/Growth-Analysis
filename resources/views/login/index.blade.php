@@ -57,11 +57,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   @endif
-
+  <img src="/img/logo1.svg" alt="" class="mb-5">
   <form action="/login" method="post">
       @csrf
     <!-- <img class="mb-4" src="/docs/5.1/assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> -->
-    <h1 class="h3 mb-3 fw-normal">Masuk</h1>
+    {{-- <h1 class="h3 mb-3 fw-normal">Masuk</h1> --}}
     @if(session()->has('loginError'))
     <div class="alert alert-danger alert-dismissable fade show" role="alert">
         {{ session('loginError') }}
@@ -82,10 +82,10 @@
         <input type="checkbox" value="remember-me"> Remember me
       </label>
     </div> --}}
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Masuk</button>
+    <button class="w-100 btn btn-lg btn-rv" type="submit">Masuk</button>
   </form>
-  <small class="d-block text-center mt-3">Belum terdaftar ? <a href="/daftar">daftar disini</a></small>
-  <p class="mt-5 mb-3 text-muted">&copy; 2022 - @arifadhitya</p>
+  {{-- <small class="d-block text-center mt-3">Belum terdaftar ? <a href="/daftar">daftar disini</a></small> --}}
+  <p class="mt-5 mb-3 text-muted">&copy; 2022 - Muhammad Arif Adhitya</p>
 </main>
 
 

@@ -18,6 +18,12 @@ class Transaksi extends Model
         'tanggaljual',
     ];
 
+    public function scopePencarian($query, array $filters){
+        $query->when($filters['search'] ?? false, function($query, $search){
+            return $query->where('kodetransaksi', 'like', '%' . $search . '%');
+        });
+    }
+
     public function pembelian(){
         //return $this->belongsTo(Pembelian::class);
         return $this->hasMany(Pembelian::class);

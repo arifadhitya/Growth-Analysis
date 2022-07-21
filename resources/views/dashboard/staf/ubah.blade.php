@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Ubah Data Staf {{ $staf->kodepegawai }}</h1>
+    <h1 class="judul-page">Ubah Data Staf {{ $staf->kodepegawai }}</h1>
 
 </div>
     <!-- Modal Input -->
@@ -12,7 +12,7 @@
         @csrf
             <div class="mb-3 {{ $errors->has('kodepegawai') ? ' has-error' : '' }}">
                 <label for="kodepegawai" class="form-label">Nomor Induk</label>
-                <input type="text" class="form-control @error('kodepegawai') is-invalid @enderror" id="kodepegawai" name="kodepegawai" required value="{{ old('kodepegawai', $staf->kodepegawai) }}">
+                <input type="text" class="form-control @error('kodepegawai') is-invalid @enderror" id="kodepegawai" name="kodepegawai" required value="{{ old('kodepegawai', $staf->kodepegawai) }}" disabled>
             @error('kodepegawai')
             <div class="invalid-feedback">
                 {{ $message }}
@@ -56,8 +56,8 @@
                 </div>
                 @enderror
             </div>
-            <a href="/staf" class="btn btn-secondary" role="button">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <a href="/staf" class="btn btn-rv" role="button">Batal</a>
+            <button type="submit" class="btn btn-rvr">Simpan Perubahan</button>
         </form>
 
 @endsection

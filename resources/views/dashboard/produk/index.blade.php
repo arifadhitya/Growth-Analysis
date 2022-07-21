@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Produk</h1>
+    <h1 class="judul-page">Data Produk</h1>
 
     <div>
     <!-- Tombol import -->
@@ -30,14 +30,18 @@
         <div class="modal-body">
             @csrf
           File harus mengikuti format seperti pada gambar.
+          <div>
+            <img src="/img/cth_tabel_produk.png" alt="" class="img-fluid">
+          </div>
+          Tanpa header tabel.
           <div class="mb-3">
             <label for="importProduk" class="form-label"></label>
             <input class="form-control" type="file" name="fileImport" id="importProduk" required="required">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Proses</button>
+          <button type="button" class="btn btn-rv" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-rvr">Proses</button>
         </div>
       </div>
     </div>
@@ -50,7 +54,18 @@
     {{ session('success') }}
   </div>
 @endif
-<table class="table table-hover">
+<div class="row my-auto">
+    <div class="col paginate">
+        {{ $dataproduk->links() }}
+    </div>
+    <form action="/produk" class="col pencarian">
+        <div class="input-group">
+            <button class="btn btn-outline-secondary btn-rv" type="submit"><i class="bi bi-search"></i></button>
+            <input type="text" class="form-control" placeholder="Cari berdasarkan Kode atau Nama Produk" name="search">
+        </div>
+    </form>
+</div>
+<table class="table table-borderless">
     <tr>
         <th>No</th>
         <th>Kode Produk</th>
@@ -61,7 +76,7 @@
         <th>Tindakan</th>
     </tr>
     @foreach($dataproduk as $pr)
-	<tr>
+	<tr class="align-middle">
 		<td>{{$loop->iteration}}</td>
 		<td>{{$pr->kodeproduk}}</td>
 		<td>{{$pr->namaproduk}}</td>
@@ -71,11 +86,11 @@
 		<td>
 			<form action="/produk/{{ $pr->id }}/edit" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-warning btn-flat" onclick="return confirm('Konfirmasi Ubah ?')">Ubah</button>
+                <button class="btn btn-secondary btn-flat" onclick="return confirm('Konfirmasi Ubah ?')">Ubah</button>
             </form>
 			<form action="/produk/{{ $pr->id }}/hapus" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-danger btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
+                <button class="btn btn-outline-secondary btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
             </form>
 		</td>
 	</tr>
@@ -100,11 +115,11 @@
     </ul>
   </nav> --}}
 
-  Halaman : {{ $dataproduk->currentPage() }} <br/>
+  {{-- Halaman : {{ $dataproduk->currentPage() }} <br/>
 	Jumlah Data : {{ $dataproduk->total() }} <br/>
 	Data Per Halaman : {{ $dataproduk->perPage() }} <br/>
 
 
-	{{ $dataproduk->links() }}
+	{{ $dataproduk->links() }} --}}
 
 @endsection

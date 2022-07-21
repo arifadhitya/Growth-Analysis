@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Tambah Staf</h1>
+    <h1 class="judul-page">Tambah Staf</h1>
 
 </div>
     <!-- Modal Input -->
@@ -56,8 +56,8 @@
                 </div>
                 @enderror
             </div>
-            <a href="/staf" class="btn btn-secondary" role="button">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <a href="/staf" class="btn btn-rv" role="button">Batal</a>
+            <button type="submit" class="btn btn-rvr">Simpan</button>
         </form>
 
 @endsection

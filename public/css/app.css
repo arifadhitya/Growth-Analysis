@@ -19,10 +19,141 @@
 
 body {
     font-family: 'Poppins', sans-serif !important;
-    background-color: #F8F9FA;
-  }
+    background-color: white;
+}
+
+#sidebarMenu{
+    height: 100% !important;
+}
 
 .sidebar{
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 6px 14px;;
     height: 100%;
-    background-color: #272822;
+    background-color: #548459;
+    color: white;
+}
+
+.container-sidebar{
+    font-size: 30px;
+    height: 100%;
+}
+
+.navbar-name{
+    font-weight: bold;
+    margin: 50px 30px 30px 15px ;
+}
+
+.profile-bot{
+    margin:inherit;
+    font-size: 15px;
+    color: white;
+    font-weight: bold;
+    bottom: 0;
+    position: absolute;
+    margin-bottom: 20px;
+}
+
+.logout button{
+    text-decoration: none;
+    color:white;
+    font-weight: normal;
+    margin: inherit;
+    border: none;
+    background-color: inherit;
+}
+
+.logout button:hover{
+    font-weight: bold;
+}
+
+.logout{
+    margin: 0px;
+    padding: 0px;
+}
+
+.nav-link{
+    color:white ;
+    font-size: 14.5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.nav-link:hover{
+    background-color: white;
+    color: #182026;
+    border-radius: 10px;
+}
+
+.judul-page{
+    font-size: 50px;
+    color: #548459;
+}
+
+.page-link{
+    font-size: 10px;
+    color:#62686D;
+}
+
+.page-link:hover{
+    color: #182026;
+    background-color: #548459;
+}
+
+.page-item.active .page-link{
+    color: #182026;
+    font-weight: bold;
+    background-color: #548459;
+    border-color: #548459;
+}
+
+.pencarian{
+    height: 20px;
+    color: #62686D;
+}
+
+.btn-rv{
+    border-color: #548459;
+    color: #548459;
+}
+
+.btn-rv:hover{
+    background-color: #548459;
+}
+
+.btn-rvr{
+    background-color: #548459;
+    color: #f0f0f0;
+}
+
+.card-analisa{
+    background-color:#f0f0f0;
+    border:none;
+    color: #182026;
+}
+
+.txt-gray{
+    color: #62686D;
+}
+
+.txt-rv{
+    color: #548459;
+    font-size: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.kanan{
+    text-align: center;
+    /* position: fixed; */
+}
+
+.widget {
+    text-decoration: none;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 10px;
 }

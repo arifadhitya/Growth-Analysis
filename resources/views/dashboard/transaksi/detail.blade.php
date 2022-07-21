@@ -3,9 +3,9 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Detail Transaksi {{ $detail[0]->kodetransaksi }}</h1>
+    <h1 class="judul-page">Detail Transaksi {{ $detail[0]->kodetransaksi }}</h1>
 
-    <a href="/transaksi"><button class="btn btn-secondary btn-flat">Kembali
+    <a href="/transaksi"><button class="btn btn-flat btn-rv">Kembali
     </button></a>
 
     <!-- Trigger Modal Input-->
@@ -34,7 +34,7 @@
     </div>
 
 </div>
-<table class="table table-hover">
+<table class="table table-borderless">
     <tr>
         <th>No</th>
         <th>Kode Produk</th>

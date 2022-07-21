@@ -26,8 +26,9 @@ class PembelianController extends Controller
      */
     public function index()
     {
-        $datatransaksi=DB::table('transaksis')->paginate(10);
-        return view('dashboard/transaksi/index', ['datatransaksi' => $datatransaksi]);
+        return view('dashboard/transaksi/index', [
+            'datatransaksi' => Transaksi::latest()->Pencarian(request(['search']))->paginate(10)
+        ]);
     }
 
     /**

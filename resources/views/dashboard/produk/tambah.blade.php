@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Tambah Produk</h1>
+    <h1 class="judul-page">Tambah Produk</h1>
 
 </div>
     <!-- Modal Input -->
@@ -35,8 +35,8 @@
                 <input type="text" class="form-control" id="inputHargajualProduk" name="hargajual">
                 <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
             </div>
-            <a href="/produk" class="btn btn-secondary" role="button">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <a href="/produk" class="btn btn-rv" role="button">Batal</a>
+            <button type="submit" class="btn btn-rvr">Simpan</button>
         </form>
 
 @endsection

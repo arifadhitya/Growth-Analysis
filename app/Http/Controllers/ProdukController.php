@@ -20,10 +20,9 @@ class ProdukController extends Controller
      */
     public function index()
     {
-        //$dataproduk = Produk::all();
-        $dataproduk=DB::table('produks')->paginate(10);
-        return view('dashboard/produk/index', ['dataproduk' => $dataproduk]);
-
+        return view('dashboard/produk/index', [
+            'dataproduk' => Produk::latest()->Pencarian(request(['search']))->paginate(10)
+        ]);
     }
 
     /**

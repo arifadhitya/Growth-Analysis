@@ -2,10 +2,10 @@
 
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Staf</h1>
+    <h1 class="judul-page">Staf</h1>
 
     <!-- Tombol tambah produk -->
-    <a href="/staf/tambah" class="btn btn-primary" role="button">Tambah</a>
+    <a href="/staf/tambah" class="btn btn-rvr" role="button">Tambah</a>
 
 </div>
 @if (session()->has('success'))
@@ -13,7 +13,7 @@
     {{ session('success') }}
   </div>
 @endif
-<table class="table table-hover">
+<table class="table table-borderless">
     <tr>
         <th>No</th>
         <th>Kode Pegawai</th>
@@ -32,11 +32,11 @@
 		<td>
 			<form action="/staf/{{ $ur->id }}/edit" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-warning btn-flat" onclick="return confirm('Konfirmasi Ubah ?')">Ubah</button>
+                <button class="btn btn-rvr btn-flat" onclick="return confirm('Konfirmasi Ubah ?')">Ubah</button>
             </form>
 			<form action="/staf/{{ $ur->id }}/hapus" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-danger btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
+                <button class="btn btn-rv btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
             </form>
 		</td>
 	</tr>

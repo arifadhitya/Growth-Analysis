@@ -4,8 +4,10 @@ namespace App\Imports;
 
 use App\Models\Pembelian;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 
-class DetailTransaksiImport implements ToModel
+class DetailTransaksiImport implements ToModel, WithChunkReading, WithBatchInserts
 {
     /**
     * @param array $row
@@ -14,13 +16,23 @@ class DetailTransaksiImport implements ToModel
     */
     public function model(array $row)
     {
-        $UNIX_DATE = ($row[8] - 25569) * 86400;
+        $UNIX_DATE = ($row[4] - 25569) * 86400;
         return new Pembelian([
             'kodetransaksi' => str_replace(' ','',$row[0]),
-            'totalbayar' => $row[5],
-            'tanggaltransaksi' => gmdate("Y-m-d", ($row[8] - 25569) * 86400),
-            'kodeproduk' => $row[2],
-            'jumlahproduk' => $row[3],
+            'totalbayar' => $row[3],
+            'tanggaltransaksi' => gmdate("Y-m-d", ($row[4] - 25569) * 86400),
+            'kodeproduk' => $row[1],
+            'jumlahproduk' => $row[2],
         ]);
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 }

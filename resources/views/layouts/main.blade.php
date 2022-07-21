@@ -29,7 +29,7 @@
 
   <body>
 
-@include('layouts.header')
+{{-- @include('layouts.header') --}}
 
 <div class="container-fluid">
   <div class="row">

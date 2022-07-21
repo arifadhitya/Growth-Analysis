@@ -9,6 +9,7 @@ class FPGrowth
 
     private $patterns;
     private $rules;
+    private $frequent;
 
     /**
      * @return mixed
@@ -84,12 +85,34 @@ class FPGrowth
     protected function findFrequentPatterns($transactions, $support_threshold)
     {
         $tree = new FPTree($transactions, $support_threshold, null, null);
-        // dd($tree);
         return $tree->minePatterns($support_threshold);
     }
 
     protected function generateAssociationRules($patterns, $confidence_threshold)
     {
+        // $rules = [];
+        // foreach (array_keys($patterns) as $itemsetStr) {
+        //     $itemset = explode(',', $itemsetStr);
+        //     $upper_support = $patterns[$itemsetStr];
+        //     for ($i = 1; $i < count($itemset); $i++) {
+        //         foreach (self::combinations($itemset, $i) as $antecedent) {
+        //             sort($antecedent);
+        //             $antecedentStr = implode(',', $antecedent);
+        //             $consequent = array_diff($itemset, $antecedent);
+        //             sort($consequent);
+        //             $consequentStr = implode(',', $consequent);
+        //             if (isset($patterns[$antecedentStr])) {
+        //                 $lower_support = $patterns[$antecedentStr];
+        //                 $confidence = (floatval($upper_support) / $lower_support);
+        //                 if ($confidence >= $confidence_threshold) {
+        //                     $rules[] = [$antecedentStr, $consequentStr, $confidence];
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // return $rules;
+
         $rules = [];
         foreach (array_keys($patterns) as $itemsetStr) {
             $itemset = explode(',', $itemsetStr);
@@ -97,35 +120,26 @@ class FPGrowth
             for ($i = 1; $i < count($itemset); $i++) {
                 foreach (self::combinations($itemset, $i) as $antecedent) {
                     sort($antecedent);
-                    //dd($itemset);
                     $antecedentStr = implode(',', $antecedent);
                     $consequent = array_diff($itemset, $antecedent);
                     sort($consequent);
                     $consequentStr = implode(',', $consequent);
                     if (isset($patterns[$antecedentStr])) {
-                        //$itemsetStr2 = implode(',', $itemset);
-                        //$upper_support = $patterns[$itemsetStr2];
                         $lower_support = $patterns[$antecedentStr];
-                        // dd($upper_support);
                         $confidence = (floatval($upper_support) / $lower_support); // LOWER SUPPORT BERUBAH
-
-                        if ($confidence >= $confidence_threshold) {
-                            $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                        if($upper_support <= $lower_support){
+                            $confidence = (floatval($upper_support) / $lower_support);
+                            if ($confidence >= $confidence_threshold) {
+                                $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                            }
                         }
-
-                        // if($upper_support <= $lower_support){
-                        //     $confidence = (floatval($upper_support) / $lower_support);
-                        //     if ($confidence >= $confidence_threshold) {
-                        //         $rules[] = [$antecedentStr, $consequentStr, $confidence];
-                        //     }
-                        // }
-
 
                     }
                 }
             }
 
         }
+        //dd($rules);
 
         return $rules;
     }

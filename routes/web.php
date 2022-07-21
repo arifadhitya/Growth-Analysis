@@ -34,7 +34,7 @@ Route::post('/daftar', [DaftarController::class, 'store']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 
 // Route Menu Produk
-Route::get('/produk', [ProdukController::class, 'index'])->middleware('auth');
+Route::get('/produk', [ProdukController::class, 'index'])->name('produk')->middleware('auth');
 Route::get('/produk/tambah', [ProdukController::class, 'create'])->middleware('auth');
 Route::post('/produk', [ProdukController::class, 'store']);
 Route::post('/produk/{produk}/edit', [ProdukController::class, 'edit']);
@@ -43,7 +43,7 @@ Route::post('/produk/{produk}/hapus',[ProdukController::class, 'destroy']);
 Route::post('/importproduk',[ProdukController::class, 'import']);
 
 // Route Menu Transaksi
-Route::get('/transaksi', [PembelianController::class, 'index'])->middleware('auth');
+Route::get('/transaksi', [PembelianController::class, 'index'])->name('transaksi')->middleware('auth');
 Route::get('/transaksi/tambah', [PembelianController::class, 'create'])->middleware('auth');
 Route::post('/transaksi', [PembelianController::class, 'store']);
 Route::post('/transaksi/{transaksi}/edit', [PembelianController::class, 'edit']);
@@ -64,7 +64,7 @@ Route::post('/staf/{staf}', [UserController::class, 'update']);
 Route::post('/staf/{staf}/hapus',[UserController::class, 'destroy']);
 
 // Route Menu Analisis
-Route::get('/analisis', [AnalisisController::class, 'index'])->middleware('auth');
-Route::post('/analisisproduk', [AnalisisController::class, 'fpgrowth']);
+Route::get('/analisis', [AnalisisController::class, 'index'])->middleware('kepalatoko');
+Route::post('/analisisproduk', [AnalisisController::class, 'fpgrowth'])->middleware('kepalatoko');
 //Route::post('/analisis/result', [AnalisisController::class, 'fpgrowth']);
 

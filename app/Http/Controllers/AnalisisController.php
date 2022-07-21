@@ -81,9 +81,9 @@ class AnalisisController extends Controller
 
 
 
-        $confidence = 0.5;
+        //$confidence = 0.5;
 
-        $fpgrowth = new FPGrowth($minSupp, $confidence);
+        $fpgrowth = new FPGrowth($minSupp, $minConf);
         $transactions = [
             // ['I1', 'I2', 'I5'],
             // ['I2', 'I4'],
@@ -114,23 +114,12 @@ class AnalisisController extends Controller
 
          //dd(count($transaksiPembelian));
         //$fpgrowth->run($transactions);
-         $fpgrowth->run($transaksiPembelian);
-
+        $fpgrowth->run($transaksiPembelian);
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
-        //dd($transaksiPembelian);
+        $columns = array_column($rules, 2);
+        array_multisort($columns, SORT_DESC, $rules);
 
-        // .$transaksiPembelian." ".$minConf." ".$confidence
-        $process = new Process(['python', '/main.py']);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        //$executePythexec($executePyth, $output, $ret_code);
-        $outp=$process->getOutput();
-        //dd($rules);
 
 
         foreach($rules as $index=>$aturan){
@@ -144,11 +133,16 @@ class AnalisisController extends Controller
             }
         }
 
+        // dd($frequent);
         return view('dashboard/analisis/result', [
             'transaksiPembelian' => $transaksiPembelian,
             'namaProduk' => $namaProduk,
             'patterns' => $patterns,
             'rules' => $rules,
+            'minSupp' => $minSupp,
+            'minConf' => $minConf,
+            'newDateFormat1' => $newDateFormat1,
+            'newDateFormat2' => $newDateFormat2,
         ]);
     }
 }

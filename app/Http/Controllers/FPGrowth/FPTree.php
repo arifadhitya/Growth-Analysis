@@ -21,7 +21,7 @@ class FPTree extends stdClass
      */
     protected static function findFrequentItems($transactions, $threshold)
     {
-
+        // SUPPORT!!!!!
         // frekuensi dari produk yang terbeli
         $items = [];
         foreach ($transactions as $transaction) {
@@ -34,6 +34,14 @@ class FPTree extends stdClass
             }
         }
 
+        // foreach ($items as $key => $value){
+        //     $items[$key] = $items[$key]/count($transactions);
+
+        // }
+        // // $items[$item] = $items[$item]/count($transactions);
+        // dd ($items);
+
+
         // hilangkan jika frekuensi produk kurang dari minimum support dan urutkan
         foreach (array_keys($items) as $key) {
             if (($items[$key] < $threshold)) {
@@ -41,6 +49,7 @@ class FPTree extends stdClass
             }
         }
         arsort($items);
+        // dd($items);
         return $items;
     }
 
@@ -166,7 +175,6 @@ class FPTree extends stdClass
     protected function zipPatterns($patterns)
     {
         $suffix = $this->root->value;
-        //dd($suffix);
         if ($suffix != null) {
             // We are in a conditional tree.
             $new_patterns = [];
@@ -176,6 +184,7 @@ class FPTree extends stdClass
                 sort($key);
                 $new_patterns[implode(',', $key)] = $patterns[$strKey];
             }
+
             return $new_patterns;
         }
         return $patterns;
@@ -186,6 +195,7 @@ class FPTree extends stdClass
      */
     protected function generatePatternList()
     {
+        $sv=[];
         $patterns = [];
         $items = array_keys($this->frequent);
         // Mengecek apakah dalam conditional fptree, maka suffix adalah dirinya sendiri.
@@ -207,9 +217,10 @@ class FPTree extends stdClass
                     }
                 }
                 $patterns[implode(',', $pattern)] = $min;
+                array_push($sv, $suffix_value);
             }
         }
-        //dd($patterns);
+        //dd($suffix_value);
         return $patterns;
     }
 

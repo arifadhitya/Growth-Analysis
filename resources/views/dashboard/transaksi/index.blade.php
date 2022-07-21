@@ -3,7 +3,7 @@
 @section('container')
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
-    <h1 class="h2">Transaksi</h1>
+    <h1 class="judul-page">Data Transaksi</h1>
 
     <div>
     <!-- Tombol import transaksi -->
@@ -15,7 +15,7 @@
         Import Detail Transaksi
     </button>
     <!-- Trigger Modal Input-->
-    <a href="/transaksi/tambah" class="btn btn-primary" role="button">Tambah</a>
+    {{-- <a href="/transaksi/tambah" class="btn btn-primary" role="button">Tambah</a> --}}
     </div>
 
     <!-- Modal -->
@@ -32,14 +32,18 @@
         <div class="modal-body">
             @csrf
           File harus mengikuti format seperti pada gambar.
+          <div>
+            <img src="/img/cth_tabel_transaksiumum.png" alt="" class="img-fluid">
+          </div>
+          Tanpa header tabel.
           <div class="mb-3">
             <label for="importTransaksi" class="form-label"></label>
             <input class="form-control" type="file" name="fileImportTrans" id="importTransaksi" required="required">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Proses</button>
+          <button type="button" class="btn btn-rv" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-rvr">Proses</button>
         </div>
       </div>
     </div>
@@ -61,14 +65,18 @@
         <div class="modal-body">
             @csrf
           File harus mengikuti format seperti pada gambar.
+          <div>
+            <img src="/img/cth_tabel_transaksidetil.png" alt="" class="img-fluid">
+          </div>
+          Tanpa header tabel.
           <div class="mb-3">
             <label for="detailTransaksi" class="form-label"></label>
             <input class="form-control" type="file" name="fileImportDetailTrans" id="detailTransaksi" required="required">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Proses</button>
+          <button type="button" class="btn btn-rv" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-rvr">Proses</button>
         </div>
       </div>
     </div>
@@ -77,7 +85,18 @@
 
 
 </div>
-<table class="table table-hover">
+<div class="row my-auto">
+    <div class="col paginate">
+        {{ $datatransaksi->links() }}
+    </div>
+    <form action="/transaksi" class="col pencarian">
+        <div class="input-group">
+            <button class="btn btn-outline-secondary btn-rv" type="submit"><i class="bi bi-search"></i></button>
+            <input type="text" class="form-control" name="search" placeholder="Cari berdasarkan Kode transaksi (cth. NF-2107200001)">
+        </div>
+    </form>
+</div>
+<table class="table table-borderless">
     <tr>
         <th>No</th>
         <th>Kode Transaksi</th>
@@ -102,23 +121,14 @@
 
             <form action="/transaksi/detail/{{ $tr->kodetransaksi }}" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-primary btn-flat">Detail</button>
+                <button class="btn btn-secondary btn-flat">Detail</button>
             </form>
             <form action="/transaksi/{{ $tr->id }}/hapus" method="post" class="d-inline">
                 @csrf
-                <button class="btn btn-danger btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
+                <button class="btn btn-outline-secondary btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>
             </form>
 		</td>
 	</tr>
 	@endforeach
 </table>
-
-Halaman : {{ $datatransaksi->currentPage() }} <br/>
-Jumlah Data : {{ $datatransaksi->total() }} <br/>
-Data Per Halaman : {{ $datatransaksi->perPage() }} <br/>
-
-
-{{ $datatransaksi->links() }}
-
-
 @endsection
