@@ -92,7 +92,10 @@ class TransaksiController extends Controller
      */
     public function destroy(Transaksi $transaksi)
     {
-        //
+        //dd($transaksi->kodetransaksi);
+        Pembelian::where('kodetransaksi', $transaksi->kodetransaksi)->delete();
+        Transaksi::where('kodetransaksi', $transaksi->kodetransaksi)->delete();
+        return redirect('/transaksi')->with('success', 'Transaksi dihapus');
     }
 
     public function import(Request $request){

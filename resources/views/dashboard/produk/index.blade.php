@@ -8,10 +8,10 @@
     <div>
     <!-- Tombol import -->
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importDataProduk">
-        Import
+        Import Data Produk
     </button>
     <!-- Tombol tambah produk -->
-    <a href="/produk/tambah" class="btn btn-primary" role="button">Tambah</a>
+    {{-- <a href="/produk/tambah" class="btn btn-primary" role="button">Tambah</a> --}}
     </div>
 
 </div>
@@ -84,10 +84,10 @@
         <td>{{$pr->hargabeli}}</td>
         <td>{{$pr->hargajual}}</td>
 		<td>
-			<form action="/produk/{{ $pr->id }}/edit" method="post" class="d-inline">
+			{{-- <form action="/produk/{{ $pr->id }}/edit" method="post" class="d-inline">
                 @csrf
                 <button class="btn btn-secondary btn-flat" onclick="return confirm('Konfirmasi Ubah ?')">Ubah</button>
-            </form>
+            </form> --}}
 			<form action="/produk/{{ $pr->id }}/hapus" method="post" class="d-inline">
                 @csrf
                 <button class="btn btn-outline-secondary btn-flat" onclick="return confirm('Konfirmasi Hapus ?')">Hapus</button>

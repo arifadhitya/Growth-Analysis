@@ -8,10 +8,11 @@
 </div>
     <!-- Modal Input -->
         <!-- Formnya -->
-        <form action="/staf/{{ $staf->id }}" method="POST" accept-charset="UTF-8" enctype="multipart/form-data">
+        <form action="/staf/{{ $staf->id }}" method="post" accept-charset="UTF-8" enctype="multipart/form-data">
         @csrf
             <div class="mb-3 {{ $errors->has('kodepegawai') ? ' has-error' : '' }}">
                 <label for="kodepegawai" class="form-label">Nomor Induk</label>
+                <input type="hidden" class="form-control @error('id') is-invalid @enderror" id="id" name="id" required value="{{ old('id', $staf->id) }}">
                 <input type="text" class="form-control @error('kodepegawai') is-invalid @enderror" id="kodepegawai" name="kodepegawai" required value="{{ old('kodepegawai', $staf->kodepegawai) }}" disabled>
             @error('kodepegawai')
             <div class="invalid-feedback">

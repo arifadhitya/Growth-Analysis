@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('kodetransaksi')->unique();
             $table->string('totalbayar');
+            $table->string('operator');
             $table->date('tanggaljual');
             $table->timestamps();
         });

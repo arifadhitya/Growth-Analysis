@@ -61,13 +61,14 @@ class UserController extends Controller
             $rules['kodepegawai'] = 'required|max:255';
         };
 
-        $validatedData = $request->validate($rules);
-
         if($request->file('profil')){
             $validatedData['profil'] = $request->file('profil')->store('user-profiles');
         }
 
-        User::where('id', $staf->id) -> update($validatedData);
+        $validatedData = $request->validate($rules);
+
+
+        User::where('id', $request->id)->update($validatedData);
 
         return redirect('/staf')->with('success', 'Data staf telah diubah');
     }

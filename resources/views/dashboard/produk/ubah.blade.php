@@ -6,7 +6,7 @@
     <h1 class="judul-page">Ubah Data Produk {{ $produk->kodeproduk }}</h1>
 
 </div>
-        <form action="/produk/{{ $produk->id }}" method="POST" accept-charset="UTF-8">
+        <form action="/produk/{{ $produk->id }}/update" method="POST" accept-charset="UTF-8">
         @csrf
             <div class="mb-3">
                 <label for="kodeproduk" class="form-label">Kode Produk</label>

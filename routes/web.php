@@ -38,7 +38,7 @@ Route::get('/produk', [ProdukController::class, 'index'])->name('produk')->middl
 Route::get('/produk/tambah', [ProdukController::class, 'create'])->middleware('auth');
 Route::post('/produk', [ProdukController::class, 'store']);
 Route::post('/produk/{produk}/edit', [ProdukController::class, 'edit']);
-Route::post('/produk/{produk}', [ProdukController::class, 'update']);
+Route::post('/produk/{produk}/update', [ProdukController::class, 'update']);
 Route::post('/produk/{produk}/hapus',[ProdukController::class, 'destroy']);
 Route::post('/importproduk',[ProdukController::class, 'import']);
 
@@ -51,6 +51,7 @@ Route::post('/transaksi/{transaksi}', [PembelianController::class, 'update']);
 Route::post('/transaksi/detail/{id}', [PembelianController::class, 'detail']);
 Route::post('/importtransaksi',[PembelianController::class, 'import']);
 
+Route::post('/transaksi/{transaksi}/hapus',[TransaksiController::class, 'destroy']);
 Route::post('/importdetailtransaksi',[TransaksiController::class, 'import']);
 
 Route::get('/analisis', [PembelianController::class, 'index'])->middleware('auth');

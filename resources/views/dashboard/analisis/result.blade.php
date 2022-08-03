@@ -52,6 +52,7 @@
                         <div class="row fw-bold">
                             @foreach ($rls[1] as $r)
                             {{ $namaProduk[$r] }}
+                            <br>
                             @endforeach
                         </div>
                     </div>

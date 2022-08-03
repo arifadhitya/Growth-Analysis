@@ -130,7 +130,7 @@ class FPGrowth
                         if($upper_support <= $lower_support){
                             $confidence = (floatval($upper_support) / $lower_support);
                             if ($confidence >= $confidence_threshold) {
-                                $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                                $rules[] = [$antecedentStr, $consequentStr, $confidence, $lower_support, $upper_support];
                             }
                         }
 
@@ -142,7 +142,7 @@ class FPGrowth
         //dd($rules);
 
         return $rules;
-    }
+     }
 
     public static function iter($var)
     {

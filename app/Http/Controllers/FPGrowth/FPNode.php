@@ -8,7 +8,7 @@ use stdClass;
 class FPNode extends stdClass
 {
     /**
-     * Create the node.
+     * Membuat node
      */
     function __construct($value, $count, $parent)
     {
@@ -20,7 +20,7 @@ class FPNode extends stdClass
     }
 
     /**
-     * Check if node has a particular child node.
+     * cek jika sudah punya child node
      */
     function has_child($value)
     {
@@ -33,7 +33,7 @@ class FPNode extends stdClass
     }
 
     /**
-     * Return a child node with a particular value.
+     * kembalikan child node jika ada
      */
     function get_child($value)
     {
@@ -46,7 +46,7 @@ class FPNode extends stdClass
     }
 
     /**
-     * Add a node as a child node.
+     * tambahkan node sebagai child
      */
     function add_child($value)
     {

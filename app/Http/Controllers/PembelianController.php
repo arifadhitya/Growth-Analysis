@@ -101,9 +101,14 @@ class PembelianController extends Controller
         // dd();die;
         $detail = Pembelian::where('kodetransaksi',$request->id)->get();
         // dd($pembelian);
-        return view('dashboard/transaksi/detail', [
-            'detail' => $detail,
-        ]);
+        if(isset($detail[0])){
+            return view('dashboard/transaksi/detail', [
+                'detail' => $detail,
+            ]);
+        }else{
+            return redirect()->back()->with('message', 'Tidak ada detail transaksi');
+        }
+
     }
 
     /**
@@ -140,7 +145,7 @@ class PembelianController extends Controller
             $file = $request->file('fileImportTrans');
             $nama_file = rand().$file->getClientOriginalName();
             $validatedData['fileImportTrans'] = $request->file('fileImportTrans')->move('file_importTransaksi',$nama_file);
-            Excel::import(new TransaksiImport, public_path('/file_importTransaksi/'.$nama_file));
+            \Excel::import(new TransaksiImport, public_path('/file_importTransaksi/'.$nama_file));
             Session::flash('sukses','Data Transaksi Berhasil Diimport!');
         }
 

@@ -7,7 +7,7 @@ use stdClass;
 class FPTree extends stdClass
 {
     /**
-     * Initialize the tree.
+     * inisialisasi tree.
      */
     public function __construct($transactions, $threshold, $root_value, $root_count)
     {
@@ -49,7 +49,7 @@ class FPTree extends stdClass
             }
         }
         arsort($items);
-        // dd($items);
+        //  dd($items);
         return $items;
     }
 
@@ -176,7 +176,7 @@ class FPTree extends stdClass
     {
         $suffix = $this->root->value;
         if ($suffix != null) {
-            // We are in a conditional tree.
+            // kondisional tree
             $new_patterns = [];
             foreach (array_keys($patterns) as $strKey) {
                 $key = explode(',', $strKey);
@@ -225,7 +225,7 @@ class FPTree extends stdClass
     }
 
     /**
-     * Generate subtrees and mine them for patterns.
+     * Generate subtree dan cari pattern
      */
     protected function mineSubTrees($threshold)
     {
@@ -233,17 +233,17 @@ class FPTree extends stdClass
         $mining_order = $this->frequent;
         asort($mining_order);
         $mining_order = array_keys($mining_order);
-        // Get items in tree in reverse order of occurrences.
+        // Mengambil item dalam tree dengan urutan terbalik
         foreach ($mining_order as $item) {
             $suffixes = [];
             $conditional_tree_input = [];
             $node = $this->headers[$item];
-            // Follow node links to get a list of all occurrences of a certain item.
+            // Melihat tree untuk beberapa item
             while (($node != null)) {
                 $suffixes[] = $node;
                 $node = $node->link;
             }
-            // For each currence of the item, trace the path back to the root node.
+            // trace jalan menuju root
             foreach ($suffixes as $suffix) {
                 $frequency = $suffix->count;
                 $path = [];
@@ -256,10 +256,10 @@ class FPTree extends stdClass
                     $conditional_tree_input[] = $path;
                 }
             }
-            // Now we have the input for a subtree, so construct it and grab the patterns.
+            // mencari pattern dari subtree
             $subtree = new FPTree($conditional_tree_input, $threshold, $item, $this->frequent[$item]);
             $subtree_patterns = $subtree->minePatterns($threshold);
-            // Insert subtree patterns into main patterns dictionary.
+            // masukkan pattern
             foreach (array_keys($subtree_patterns) as $pattern) {
                 if (in_array($pattern, $patterns)) {
                     $patterns[$pattern] += $subtree_patterns[$pattern];

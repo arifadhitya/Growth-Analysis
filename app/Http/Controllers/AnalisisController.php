@@ -62,8 +62,9 @@ class AnalisisController extends Controller
                 array_push($x, $value2->kodeproduk);
                 $transaksiPembelian[$transaksi1] = $x;
             }
-
-
+            if(isset($transaksiPembelian[$transaksi1])){
+                $transaksiPembelian[$transaksi1] = array_unique($transaksiPembelian[$transaksi1]);
+            }
 
         }
 
@@ -85,16 +86,6 @@ class AnalisisController extends Controller
 
         $fpgrowth = new FPGrowth($minSupp, $minConf);
         $transactions = [
-            // ['I1', 'I2', 'I5'],
-            // ['I2', 'I4'],
-            // ['I2', 'I3'],
-            // ['I1', 'I2', 'I4'],
-            // ['I1', 'I3'],
-            // ['I2', 'I3'],
-            // ['I1', 'I3'],
-            // ['I1', 'I2', 'I3', 'I5'],
-            // ['I1', 'I2', 'I3'],
-
             ['I1', 'I2', 'I5'],
             ['I2', 'I4'],
             ['I2', 'I3'],
@@ -105,6 +96,8 @@ class AnalisisController extends Controller
             ['I1', 'I2', 'I3', 'I5'],
             ['I1', 'I2', 'I3'],
 
+
+
             // ['M', 'O', 'N', 'K', 'E', 'Y'],
             // ['D', 'O', 'N', 'K', 'E', 'Y'],
             // ['M', 'A', 'K', 'E'],
@@ -112,7 +105,7 @@ class AnalisisController extends Controller
             // ['C', 'O', 'O', 'K', 'I', 'E']
         ];
 
-         //dd(count($transaksiPembelian));
+        // dd($transaksiPembelian);
         //$fpgrowth->run($transactions);
         $fpgrowth->run($transaksiPembelian);
         $patterns = $fpgrowth->getPatterns();
@@ -120,6 +113,7 @@ class AnalisisController extends Controller
         $columns = array_column($rules, 2);
         array_multisort($columns, SORT_DESC, $rules);
 
+        // dd($namaProduk);
 
 
         foreach($rules as $index=>$aturan){
@@ -133,7 +127,7 @@ class AnalisisController extends Controller
             }
         }
 
-        // dd($frequent);
+        dd($rules);
         return view('dashboard/analisis/result', [
             'transaksiPembelian' => $transaksiPembelian,
             'namaProduk' => $namaProduk,
