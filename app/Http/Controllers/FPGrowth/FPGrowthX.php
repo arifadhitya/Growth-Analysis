@@ -7,8 +7,8 @@ namespace App\Http\Controllers\FPGrowth;
 
 class FPGrowth
 {
-    protected $support = 3;
-    protected $confidence = 0.7;
+    //protected $support = 3;
+    //protected $confidence = 0.7;
 
     private $patterns;
     private $rules;

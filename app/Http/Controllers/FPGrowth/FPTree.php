@@ -12,12 +12,15 @@ class FPTree extends stdClass
     public function __construct($transactions, $threshold, $root_value, $root_count)
     {
         $this->frequent = self::findFrequentItems($transactions, $threshold);
+        $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
+        // dd($this->transactionsX);
         $this->headers = self::buildHeaderTable($this->frequent);
-        $this->root = $this->buildFPTree($transactions, $root_value, $root_count, $this->frequent, $this->headers);
+        $this->root = $this->buildFPTree($this->transactionsX, $root_value, $root_count, $this->frequent, $this->headers);
     }
 
     /**
-     * Mencari frekuensi produk dalam transaksi, pruning, dan sorting dari besar ke kecil
+     * Mencari nilai frekuensi produk dalam transaksi,
+     * pruning dan sorting dari besar ke kecil.
      */
     protected static function findFrequentItems($transactions, $threshold)
     {
@@ -53,6 +56,32 @@ class FPTree extends stdClass
         return $items;
     }
 
+
+    /*
+        Menghapus transaksi yang hanya mengandung 1 jenis produk.
+    */
+    protected static function pruneTransaction($transactions, $frequent)
+    {
+        // dd($transactions);
+        $transactionsX = [];
+        foreach ($transactions as $transaction) {
+            $y = [];
+            foreach ($transaction as $item) {
+                if (isset($frequent[$item])) {
+                    $y[] = $item;
+                }
+            }
+            // $transactionsX[]=$y;
+            if(count($y)>1){
+                $transactionsX[]=$y;
+            }
+
+        }
+        // dd($transactionsX);
+        return $transactionsX;
+    }
+
+
     /**
      * Membuat header
      */
@@ -63,22 +92,24 @@ class FPTree extends stdClass
         foreach (array_keys($frequent) as $key) {
             $headers[$key] = null;
         }
-
+        // dd($headers);
         return $headers;
     }
 
     /**
      * Membuat fptree dan mengembalikan node root
      */
-    protected function buildFPTree(&$transactions, &$root_value, &$root_count, &$frequent, &$headers)
+    protected function buildFPTree(&$transactionsX, &$root_value, &$root_count, &$frequent, &$headers)
     {
         // membuat node null
         $root = new FPNode($root_value, $root_count, null);
-
         arsort($frequent);
-
         // memasukkan ke dalam tree
-        foreach ($transactions as $transaction) {
+        // dd($transactionsX);
+        foreach ($transactionsX as $transaction) {
+            // dd($transaction);
+            sort($transaction);
+            // dd($transactions);
             $sorted_items = [];
             foreach ($transaction as $item) {
                 if (isset($frequent[$item])) {
@@ -89,15 +120,31 @@ class FPTree extends stdClass
             // membandingkan a dan b dan mengembalikan nilai true atau false
             usort($sorted_items, function ($a, $b) use ($frequent) {
                 return $frequent[$a] == $frequent[$b] ? 0 : (
-                $frequent[$a] > $frequent[$b] ? -1 : 1
+                    $frequent[$a] > $frequent[$b] ? -1 : 1
                 );
             });
 
+            // dd($frequent);
             // jika jumlah sorted_item lebih besar dari 0 maka kirimkan dan jalankan insertTree
             if (count($sorted_items) > 0) {
                 $this->insertTree($sorted_items, $root, $headers);
             }
         }
+
+        // $x = [];
+        // foreach ($transactions as $transaction) {
+        //     $y = [];
+        //     foreach ($transaction as $item) {
+        //         if (isset($frequent[$item])) {
+        //             $y[] = $item;
+        //         }
+        //     }
+        //     if(count($y)>1){
+        //         $x[]=$y;
+        //     }
+
+        // }
+        // dd($x);
         return $root;
     }
 
@@ -108,7 +155,6 @@ class FPTree extends stdClass
     {
         // memasukkan items pertama ke first
         $first = $items[0];
-
         // memasukkan child dari first ke dalam $child
         $child = $node->get_child($first);
 
@@ -131,10 +177,12 @@ class FPTree extends stdClass
         }
 
         $remaining_items = array_slice($items, 1, null);
-
+        // dd($remaining_items);
+        // dd($remaining_items);
         // jika item yang tertinggal lebih besar dari 0 maka masukkan dan jalankan insertTree
         if (count($remaining_items) > 0) {
             $this->insertTree($remaining_items, $child, $headers);
+            // dd($first);
         }
     }
 
@@ -164,6 +212,7 @@ class FPTree extends stdClass
         if ($this->treeHasSinglePath($this->root)) {
             return $this->generatePatternList();
         } else {
+            // dd($threshold);
             return $this->zipPatterns($this->mineSubTrees($threshold));
         }
     }
@@ -220,7 +269,7 @@ class FPTree extends stdClass
                 array_push($sv, $suffix_value);
             }
         }
-        //dd($suffix_value);
+        // dd($pattern);
         return $patterns;
     }
 
@@ -232,6 +281,7 @@ class FPTree extends stdClass
         $patterns = [];
         $mining_order = $this->frequent;
         asort($mining_order);
+        // dd($mining_order);
         $mining_order = array_keys($mining_order);
         // Mengambil item dalam tree dengan urutan terbalik
         foreach ($mining_order as $item) {
@@ -243,11 +293,14 @@ class FPTree extends stdClass
                 $suffixes[] = $node;
                 $node = $node->link;
             }
+            // dd($suffixes);
+
             // trace jalan menuju root
             foreach ($suffixes as $suffix) {
                 $frequency = $suffix->count;
                 $path = [];
                 $parent = $suffix->parent;
+                // dd($parent);
                 while (($parent->parent != null)) {
                     $path[] = $parent->value;
                     $parent = $parent->parent;
@@ -256,6 +309,10 @@ class FPTree extends stdClass
                     $conditional_tree_input[] = $path;
                 }
             }
+
+            // !!!Melihat FPTree !!!
+            // dd($parent->children);
+
             // mencari pattern dari subtree
             $subtree = new FPTree($conditional_tree_input, $threshold, $item, $this->frequent[$item]);
             $subtree_patterns = $subtree->minePatterns($threshold);
@@ -268,7 +325,7 @@ class FPTree extends stdClass
                 }
             }
         }
-        //dd($patterns);
+        // dd($patterns);
         return $patterns;
     }
 }

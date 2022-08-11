@@ -90,29 +90,6 @@ class FPGrowth
 
     protected function generateAssociationRules($patterns, $confidence_threshold)
     {
-        // $rules = [];
-        // foreach (array_keys($patterns) as $itemsetStr) {
-        //     $itemset = explode(',', $itemsetStr);
-        //     $upper_support = $patterns[$itemsetStr];
-        //     for ($i = 1; $i < count($itemset); $i++) {
-        //         foreach (self::combinations($itemset, $i) as $antecedent) {
-        //             sort($antecedent);
-        //             $antecedentStr = implode(',', $antecedent);
-        //             $consequent = array_diff($itemset, $antecedent);
-        //             sort($consequent);
-        //             $consequentStr = implode(',', $consequent);
-        //             if (isset($patterns[$antecedentStr])) {
-        //                 $lower_support = $patterns[$antecedentStr];
-        //                 $confidence = (floatval($upper_support) / $lower_support);
-        //                 if ($confidence >= $confidence_threshold) {
-        //                     $rules[] = [$antecedentStr, $consequentStr, $confidence];
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        // return $rules;
-
         $rules = [];
         foreach (array_keys($patterns) as $itemsetStr) {
             $itemset = explode(',', $itemsetStr);
@@ -126,19 +103,42 @@ class FPGrowth
                     $consequentStr = implode(',', $consequent);
                     if (isset($patterns[$antecedentStr])) {
                         $lower_support = $patterns[$antecedentStr];
-                        $confidence = (floatval($upper_support) / $lower_support); // LOWER SUPPORT BERUBAH
-                        if($upper_support <= $lower_support){
-                            $confidence = (floatval($upper_support) / $lower_support);
-                            if ($confidence >= $confidence_threshold) {
-                                $rules[] = [$antecedentStr, $consequentStr, $confidence, $lower_support, $upper_support];
-                            }
+                        $confidence = (floatval($upper_support) / $lower_support);
+                        if ($confidence >= $confidence_threshold) {
+                            $rules[] = [$antecedentStr, $consequentStr, $confidence];
                         }
-
                     }
                 }
             }
-
         }
+        return $rules;
+
+        // $rules = [];
+        // foreach (array_keys($patterns) as $itemsetStr) {
+        //     $itemset = explode(',', $itemsetStr);
+        //     $upper_support = $patterns[$itemsetStr];
+        //     for ($i = 1; $i < count($itemset); $i++) {
+        //         foreach (self::combinations($itemset, $i) as $antecedent) {
+        //             sort($antecedent);
+        //             $antecedentStr = implode(',', $antecedent);
+        //             $consequent = array_diff($itemset, $antecedent);
+        //             sort($consequent);
+        //             $consequentStr = implode(',', $consequent);
+        //             if (isset($patterns[$antecedentStr])) {
+        //                 $lower_support = $patterns[$antecedentStr];
+        //                 $confidence = (floatval($upper_support) / $lower_support); // LOWER SUPPORT BERUBAH
+        //                 if($upper_support <= $lower_support){
+        //                     $confidence = (floatval($upper_support) / $lower_support);
+        //                     if ($confidence >= $confidence_threshold) {
+        //                         $rules[] = [$antecedentStr, $consequentStr, $confidence, $lower_support, $upper_support];
+        //                     }
+        //                 }
+
+        //             }
+        //         }
+        //     }
+
+        // }
         //dd($rules);
 
         return $rules;

@@ -81,31 +81,36 @@ class AnalisisController extends Controller
         // }
 
 
-
-        //$confidence = 0.5;
+        $support = 2;
+        $confidence = 0;
 
         $fpgrowth = new FPGrowth($minSupp, $minConf);
         $transactions = [
-            ['I1', 'I2', 'I5'],
-            ['I2', 'I4'],
-            ['I2', 'I3'],
-            ['I1', 'I2', 'I4'],
-            ['I1', 'I3'],
-            ['I2', 'I3'],
-            ['I1', 'I3'],
-            ['I1', 'I2', 'I3', 'I5'],
-            ['I1', 'I2', 'I3'],
+            // ['I1', 'I2', 'I5'],
+            // ['I2', 'I4'],
+            // ['I2', 'I3'],
+            // ['I1', 'I2', 'I4'],
+            // ['I1', 'I3'],
+            // ['I2', 'I3'],
+            // ['I1', 'I3'],
+            // ['I1', 'I2', 'I3', 'I5'],
+            // ['I1', 'I2', 'I3'],
 
 
 
-            // ['M', 'O', 'N', 'K', 'E', 'Y'],
-            // ['D', 'O', 'N', 'K', 'E', 'Y'],
-            // ['M', 'A', 'K', 'E'],
-            // ['M', 'U', 'C', 'K', 'Y'],
-            // ['C', 'O', 'O', 'K', 'I', 'E']
+            ['M', 'O', 'N', 'K', 'E', 'Y'],
+            ['D', 'O', 'N', 'K', 'E', 'Y'],
+            ['M', 'A', 'K', 'E'],
+            ['M', 'U', 'C', 'K', 'Y'],
+            ['C', 'O', 'O', 'K', 'I', 'E']
         ];
+        foreach ($transactions as $transaction => $value){
+            if($transactions[$transaction]){
+                $transactions[$transaction] = array_unique($transactions[$transaction]);
+            }
+        }
 
-        // dd($transaksiPembelian);
+
         //$fpgrowth->run($transactions);
         $fpgrowth->run($transaksiPembelian);
         $patterns = $fpgrowth->getPatterns();
@@ -113,7 +118,6 @@ class AnalisisController extends Controller
         $columns = array_column($rules, 2);
         array_multisort($columns, SORT_DESC, $rules);
 
-        // dd($namaProduk);
 
 
         foreach($rules as $index=>$aturan){
@@ -127,7 +131,9 @@ class AnalisisController extends Controller
             }
         }
 
-        dd($rules);
+
+        // dd($rules);
+        // dd($transaksiPembelian);
         return view('dashboard/analisis/result', [
             'transaksiPembelian' => $transaksiPembelian,
             'namaProduk' => $namaProduk,
