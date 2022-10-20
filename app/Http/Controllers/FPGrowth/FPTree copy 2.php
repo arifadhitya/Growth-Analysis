@@ -7,7 +7,7 @@ use drupol\phpermutations\Generators\Combinations;
 
 class FPTree extends stdClass
 {
-    public array $frequent;
+    private array $frequent;
     private array $headers;
     private FPNode $root;
     /**
@@ -15,9 +15,6 @@ class FPTree extends stdClass
      */
     public function __construct(array $transactions, int $threshold, $root_value, int $root_count)
     {
-        // dd($root_value);
-        // dd($root_count);
-
         $this->frequent = $this->findFrequentItems($transactions, $threshold);
         $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
         // dd($transactions);
@@ -305,17 +302,13 @@ class FPTree extends stdClass
     public function minePatterns(int $threshold): array
     {
         // $threshold = 2;
-        // print_r(($this->treeHasSinglePath($this->root)));
+        // dd(($this->treeHasSinglePath($this->root)));
         if ($this->treeHasSinglePath($this->root)) {
             return $this->generatePatternList();
-        } else {
-
-            return $this->zipPatterns($this->mineSubTrees($threshold));
         }
         // dd(($this->mineSubTrees($threshold)));
 // PERAHTIKAN MINESUBTREE
-// dd($this->mineSubTrees($threshold));
-
+        return $this->zipPatterns($this->mineSubTrees($threshold));
     }
 
     /**
@@ -375,7 +368,6 @@ class FPTree extends stdClass
         //     sort($suffix_value);
         //     $patterns[implode(',', $suffix_value)] = $this->root->count;
         // }
-        // dd(($this->root->value !== null));
 
         if ($this->root->value !== null) {
             $patterns[$this->root->value] = $this->root->count;
@@ -399,8 +391,6 @@ class FPTree extends stdClass
                 // dd($patterns);
         }
         //  dd($patterns);
-
-        // dd($this->frequent);
         return $patterns;
     }
 
@@ -507,7 +497,6 @@ class FPTree extends stdClass
         $mining_order = array_keys($mining_order);
         // dd($mining_order);
         // Get items in tree in reverse order of occurrences.
-
         foreach ($mining_order as $item) {
             // dd($item);
             /** @var FPNode[] $suffixes */
@@ -518,7 +507,6 @@ class FPTree extends stdClass
             // Follow node links to get a list of all occurrences of a certain item.
             while ($node !== null) {
                 $suffixes[] = $node;
-                // print_r($suffixes);
                 $node = $node->link;
             }
 
@@ -529,23 +517,17 @@ class FPTree extends stdClass
                 $parent = $suffix->parent;
                 while ($parent->parent !== null) {
                     $path[] = $parent->value;
-                    // dd($path);
                     $parent = $parent->parent;
                 }
 
                 for ($i = 0; $i < $frequency; $i++) {
-                    $conditional_tree_input[] = array_reverse($path);
+                    $conditional_tree_input[] = $path;
                 }
 
             }
 
-            //  MELIHAT KONDISIONAL PATTERN BASE YG AKAN DIJADIKAN SEBAGAI TRANSAKSI PADA SUBTREE
-            $conditional_tree_input = array_filter($conditional_tree_input);
-            // print_r($conditional_tree_input);
-
-
-
-
+            //  MELIHAT KONDISIONAL PATTERN BASE
+            print_r($conditional_tree_input);
 
             //  dd($frequency);
 
@@ -555,24 +537,21 @@ class FPTree extends stdClass
             // print_r($subtree);
 
             $subtreePatterns = $subtree->minePatterns($threshold);
-            // print_r($subtreePatterns);
+            // dd($conditional_tree_input);
 
 
             // Insert subtree patterns into main patterns dictionary.
             foreach (array_keys($subtreePatterns) as $pattern) {
-                // print_r($subtreePatterns);
                 if (in_array($pattern, $patterns)) {
-
                     $patterns[$pattern] += $subtreePatterns[$pattern];
                 } else {
                     $patterns[$pattern] = $subtreePatterns[$pattern];
                 }
             }
-
-
         }
+        // print_r($patterns);
+        // dd($patterns);
 
-        // print_r($mining_order);
         return $patterns;
     }
 }

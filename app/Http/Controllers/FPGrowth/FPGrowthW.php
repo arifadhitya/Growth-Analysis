@@ -1,6 +1,11 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Http\Controllers\FPGrowth;
+
+use drupol\phpermutations\Generators\Combinations;
+use Mockery\Matcher\Pattern;
 
 class FPGrowth
 {
@@ -22,7 +27,7 @@ class FPGrowth
     /**
      * @param mixed $support
      */
-    public function setSupport($support): self
+    public function setSupport(int $support): self
     {
         $this->support = $support;
         return $this;
@@ -76,48 +81,31 @@ class FPGrowth
      * Do algorithm
      * @param $transactions
      */
-    // public function run($transactions)
-    // {
-    //     $this->patterns = $this->findFrequentPatterns($transactions, $this->support);
-    //     $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
-    // }
-
     public function run(array $transactions)
     {
-        // dd($transactions);
         $this->patterns = $this->findFrequentPatterns($transactions);
+        // dd($this->patterns);
         $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
     }
 
-    // protected function findFrequentPatterns($transactions, $support_threshold)
-    // {
-    //     $tree = new FPTree($transactions, $support_threshold, null, null);
-    //     return $tree->minePatterns($support_threshold);
-    // }
-
-    protected function findFrequentPatterns(array $transactions)
+    protected function findFrequentPatterns(array $transactions): array
     {
         $tree = new FPTree($transactions, $this->support, null, 0);
-        $miners = $tree->minePatterns($this->support);
-        $prekuen = $tree->frequent;
-        foreach ($prekuen as $key => $value){
-            if(!in_array($key, $miners)){
-                $miners[$key] = $value;
-            }
-        }
-        // dd($miners);
-        return $miners;
+        // dd($tree);
+        return $tree->minePatterns($this->support);
     }
 
-    protected function generateAssociationRules(array $patterns, $confidence_threshold): array
+    protected function generateAssociationRules($patterns, $confidence_threshold)
     {
-        // dd($patterns);
         $rules = [];
         foreach (array_keys($patterns) as $itemsetStr) {
+            // dd($itemsetStr);
             $itemset = explode(',', $itemsetStr);
             $upper_support = $patterns[$itemsetStr];
             for ($i = 1; $i < count($itemset); $i++) {
-                foreach (self::combinations($itemset, $i) as $antecedent) {
+                $combinations = new Combinations($itemset, $i);
+                foreach ($combinations->generator() as $antecedent) {
+                    // print_r($antecedent);
                     sort($antecedent);
                     $antecedentStr = implode(',', $antecedent);
                     $consequent = array_diff($itemset, $antecedent);
@@ -132,10 +120,37 @@ class FPGrowth
                     }
                 }
             }
+            // dd($rules);
         }
-                // dd($rules);
-
         return $rules;
+    }
+
+
+
+    // protected function generateAssociationRules($patterns, $confidence_threshold)
+    // {
+    //     $rules = [];
+    //     foreach (array_keys($patterns) as $itemsetStr) {
+    //         $itemset = explode(',', $itemsetStr);
+    //         $upper_support = $patterns[$itemsetStr];
+    //         for ($i = 1; $i < count($itemset); $i++) {
+    //             foreach (self::combinations($itemset, $i) as $antecedent) {
+    //                 sort($antecedent);
+    //                 $antecedentStr = implode(',', $antecedent);
+    //                 $consequent = array_diff($itemset, $antecedent);
+    //                 sort($consequent);
+    //                 $consequentStr = implode(',', $consequent);
+    //                 if (isset($patterns[$antecedentStr])) {
+    //                     $lower_support = $patterns[$antecedentStr];
+    //                     $confidence = (floatval($upper_support) / $lower_support);
+    //                     if ($confidence >= $confidence_threshold) {
+    //                         $rules[] = [$antecedentStr, $consequentStr, $confidence];
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return $rules;
 
         // $rules = [];
         // foreach (array_keys($patterns) as $itemsetStr) {
@@ -165,70 +180,70 @@ class FPGrowth
         //  dd($rules);
 
         // return $rules;
-     }
+    //  }
 
-    public static function iter($var)
-    {
+    // public static function iter($var)
+    // {
 
-        switch (true) {
-            case $var instanceof \Iterator:
-                return $var;
+    //     switch (true) {
+    //         case $var instanceof \Iterator:
+    //             return $var;
 
-            case $var instanceof \Traversable:
-                return new \IteratorIterator($var);
+    //         case $var instanceof \Traversable:
+    //             return new \IteratorIterator($var);
 
-            case is_string($var):
-                $var = str_split($var);
+    //         case is_string($var):
+    //             $var = str_split($var);
 
-            case is_array($var):
-                return new \ArrayIterator($var);
+    //         case is_array($var):
+    //             return new \ArrayIterator($var);
 
-            default:
-                $type = gettype($var);
-                throw new \InvalidArgumentException("'$type' type is not iterable");
-        }
+    //         default:
+    //             $type = gettype($var);
+    //             throw new \InvalidArgumentException("'$type' type is not iterable");
+    //     }
 
-        return ;
-    }
+    //     return ;
+    // }
 
-    //
-    public static function combinations($iterable, $r)
-    {
-        $pool = is_array($iterable) ? $iterable : iterator_to_array(self::iter($iterable));
-        $n = sizeof($pool);
+    // //
+    // public static function combinations($iterable, $r)
+    // {
+    //     $pool = is_array($iterable) ? $iterable : iterator_to_array(self::iter($iterable));
+    //     $n = sizeof($pool);
 
-        if ($r > $n) {
-            return;
-        }
+    //     if ($r > $n) {
+    //         return;
+    //     }
 
-        $indices = range(0, $r - 1);
-        yield array_slice($pool, 0, $r);
+    //     $indices = range(0, $r - 1);
+    //     yield array_slice($pool, 0, $r);
 
-        for (; ;) {
-            for (; ;) {
-                for ($i = $r - 1; $i >= 0; $i--) {
-                    if ($indices[$i] != $i + $n - $r) {
-                        break 2;
-                    }
-                }
+    //     for (; ;) {
+    //         for (; ;) {
+    //             for ($i = $r - 1; $i >= 0; $i--) {
+    //                 if ($indices[$i] != $i + $n - $r) {
+    //                     break 2;
+    //                 }
+    //             }
 
-                return;
-            }
+    //             return;
+    //         }
 
-            $indices[$i]++;
+    //         $indices[$i]++;
 
-            for ($j = $i + 1; $j < $r; $j++) {
-                $indices[$j] = $indices[$j - 1] + 1;
-            }
+    //         for ($j = $i + 1; $j < $r; $j++) {
+    //             $indices[$j] = $indices[$j - 1] + 1;
+    //         }
 
-            $row = [];
-            foreach ($indices as $i) {
-                $row[] = $pool[$i];
-            }
+    //         $row = [];
+    //         foreach ($indices as $i) {
+    //             $row[] = $pool[$i];
+    //         }
 
-            yield $row;
-        }
-        // dd(combinations($iterable, $r));
-    }
+    //         yield $row;
+    //     }
+    //     // dd(combinations($iterable, $r));
+    // }
 
 }

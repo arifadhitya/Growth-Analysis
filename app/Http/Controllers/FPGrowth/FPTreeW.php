@@ -1,61 +1,101 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Http\Controllers\FPGrowth;
 
-use stdClass;
 use drupol\phpermutations\Generators\Combinations;
+use Illuminate\Foundation\Http\FormRequest;
 
-class FPTree extends stdClass
+class FPTree
 {
-    public array $frequent;
+    private array $frequent;
     private array $headers;
     private FPNode $root;
     /**
      * inisialisasi tree.
      */
-    public function __construct(array $transactions, int $threshold, $root_value, int $root_count)
+    // public function __construct($transactions, $threshold, $root_value, $root_count)
+    // {
+    //     $this->frequent = self::findFrequentItems($transactions, $threshold);
+    //     $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
+    //     // dd($this->transactionsX);
+    //     $this->headers = self::buildHeaderTable($this->frequent);
+    //     $this->root = $this->buildFPTree($this->transactionsX, $root_value, $root_count, $this->frequent, $this->headers);
+    // }
+    public function __construct(array $transactions, int $threshold, $rootValue, int $rootCount)
     {
-        // dd($root_value);
-        // dd($root_count);
-
         $this->frequent = $this->findFrequentItems($transactions, $threshold);
-        $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
-        // dd($transactions);
-        // $this->headers = self::buildHeaderTable($this->frequent);
+        // dd($this->frequent);
         $this->headers = $this->buildHeaderTable();
-        // $this->root = $this->buildFPTree($this->transactionsX, $root_value, $root_count, $this->frequent, $this->headers);
-        // dd($this->transactionsX);
-        $this->root = $this->buildFPTree($transactions, $root_value, $root_count, $this->frequent);
+        $this->root = $this->buildFPTree($transactions, $rootValue, $rootCount, $this->frequent);
     }
-// PERHATIKAN FUNGSI DIATAS
+
     /**
      * Mencari nilai frekuensi produk dalam transaksi,
      * pruning dan sorting dari besar ke kecil.
      */
+    // protected static function findFrequentItems($transactions, $threshold)
+    // {
+    //     // SUPPORT!!!!!
+    //     // frekuensi dari produk yang terbeli
+    //     $items = [];
+    //     foreach ($transactions as $transaction) {
+    //         foreach ($transaction as $item) {
+    //             if (array_key_exists($item, $items)) {
+    //                 $items[$item] += 1;
+    //             } else {
+    //                 $items[$item] = 1;
+    //             }
+    //         }
+    //     }
+
+    //     // foreach ($items as $key => $value){
+    //     //     $items[$key] = $items[$key]/count($transactions);
+
+    //     // }
+    //     // // $items[$item] = $items[$item]/count($transactions);
+    //     // dd ($items);
+
+
+    //     // hilangkan jika frekuensi produk kurang dari minimum support dan urutkan
+    //     foreach (array_keys($items) as $key) {
+    //         if (($items[$key] < $threshold)) {
+    //             unset($items[$key]);
+    //         }
+    //     }
+    //     arsort($items);
+    //     //  dd($items);
+    //     return $items;
+    // }
+
+    /**
+     * Create a dictionary of items with occurrences above the threshold.
+     * @param array $transactions
+     * @param int $threshold
+     * @return array<string,int>
+     */
     protected function findFrequentItems(array $transactions, int $threshold): array
     {
-        // SUPPORT!!!!!
-        // frekuensi dari produk yang terbeli
-        $items = [];
+        $frequentItems = [];
         foreach ($transactions as $transaction) {
             foreach ($transaction as $item) {
-                if (array_key_exists($item, $items)) {
-                    $items[$item] += 1;
+                if (array_key_exists($item, $frequentItems)) {
+                    $frequentItems[$item] += 1;
                 } else {
-                    $items[$item] = 1;
+                    $frequentItems[$item] = 1;
                 }
             }
         }
 
-        // hilangkan jika frekuensi produk kurang dari minimum support dan urutkan
-        foreach (array_keys($items) as $key) {
-            if (($items[$key] < $threshold)) {
-                unset($items[$key]);
+        foreach (array_keys($frequentItems) as $key) {
+            if ($frequentItems[$key] < $threshold) {
+                unset($frequentItems[$key]);
             }
         }
-        arsort($items);
-        //  dd($items);
-        return $items;
+        arsort($frequentItems);
+        // dd($frequentItems);
+        return $frequentItems;
     }
 
 
@@ -97,18 +137,14 @@ class FPTree extends stdClass
     //     // dd($headers);
     //     return $headers;
     // }
-// ================================
     protected function buildHeaderTable(): array
     {
-        // menghapus value dari key array frequent
         $headers = [];
         foreach (array_keys($this->frequent) as $key) {
             $headers[$key] = null;
         }
-        // dd($headers);
         return $headers;
     }
-
 
     /**
      * Membuat fptree dan mengembalikan node root
@@ -145,8 +181,6 @@ class FPTree extends stdClass
     //         }
     //     }
 
-
-
     //     // $x = [];
     //     // foreach ($transactions as $transaction) {
     //     //     $y = [];
@@ -164,25 +198,25 @@ class FPTree extends stdClass
     //     return $root;
     // }
 
-    protected function buildFPTree($transactions, $root_value, $root_count, &$frequent): FPNode
+    protected function buildFPTree($transactions, $rootValue, $rootCount, &$frequent): FPNode
     {
-        $root = new FPNode($root_value, $root_count, null);
+        $root = new FPNode($rootValue, $rootCount, null);
         arsort($frequent);
         // dd($transactions);
         foreach ($transactions as $transaction) {
-            $sorted_items = [];
+            $sortedItems = [];
             foreach ($transaction as $item) {
                 if (isset($frequent[$item])) {
-                    $sorted_items[] = $item;
+                    $sortedItems[] = $item;
                 }
             }
 
-            usort($sorted_items, function ($a, $b) use ($frequent) {
+            usort($sortedItems, function ($a, $b) use ($frequent) {
                 return $frequent[$b] <=> $frequent[$a];
             });
 
-            if (count($sorted_items) > 0) {
-                $this->insertTree($sorted_items, $root);
+            if (count($sortedItems) > 0) {
+                $this->insertTree($sortedItems, $root);
             }
         }
         return $root;
@@ -225,17 +259,16 @@ class FPTree extends stdClass
     //         // dd($first);
     //     }
     // }
-
     protected function insertTree(array $items, FPNode $node): void
     {
         $first = $items[0];
-        $child = $node->get_child($first);
+        $child = $node->getChild($first);
 
         if ($child !== null) {
             $child->count += 1;
         } else {
             // Add new child
-            $child = $node->add_child($first);
+            $child = $node->addChild($first);
             // Link it to header structure.
             if ($this->headers[$first] === null) {
                 $this->headers[$first] = $child;
@@ -249,12 +282,13 @@ class FPTree extends stdClass
         }
 
         // Call function recursively.
-        $remaining_items = array_slice($items, 1, null);
+        $remainingItems = array_slice($items, 1, null);
 
-        if (count($remaining_items) > 0) {
-            $this->insertTree($remaining_items, $child);
+        if (count($remainingItems) > 0) {
+            $this->insertTree($remainingItems, $child);
         }
     }
+
 
     /**
      * Mengecek apakah tree cuma punya 1 jalur dibawahnya
@@ -272,16 +306,15 @@ class FPTree extends stdClass
     //         return true && $this->treeHasSinglePath($node->children[0]);
     //     }
     // }
-
     protected function treeHasSinglePath(FPNode $node): bool
     {
-        $num_children = count($node->children);
+        $childrenCount = count($node->children);
 
-        if ($num_children > 1) {
+        if ($childrenCount > 1) {
             return false;
         }
 
-        if ($num_children === 0) {
+        if ($childrenCount === 0) {
             return true;
         }
 
@@ -289,7 +322,7 @@ class FPTree extends stdClass
     }
 
     /**
-     * Mine fp-tree
+     * Mine fp-tree untuk frequent pattern
      */
     // public function minePatterns($threshold)
     // {
@@ -301,21 +334,13 @@ class FPTree extends stdClass
     //         // dd($threshold);
     //     }
     // }
-
     public function minePatterns(int $threshold): array
     {
-        // $threshold = 2;
-        // print_r(($this->treeHasSinglePath($this->root)));
         if ($this->treeHasSinglePath($this->root)) {
             return $this->generatePatternList();
-        } else {
-
-            return $this->zipPatterns($this->mineSubTrees($threshold));
         }
-        // dd(($this->mineSubTrees($threshold)));
-// PERAHTIKAN MINESUBTREE
-// dd($this->mineSubTrees($threshold));
 
+        return $this->zipPatterns($this->mineSubTrees($threshold));
     }
 
     /**
@@ -347,91 +372,82 @@ class FPTree extends stdClass
         }
 
         // We are in a conditional tree.
-        $new_patterns = [];
+        $newPatterns = [];
         foreach (array_keys($patterns) as $strKey) {
             $key = explode(',', $strKey);
             $key[] = $this->root->value;
             sort($key);
-            $new_patterns[implode(',', $key)] = $patterns[$strKey];
+            $newPatterns[implode(',', $key)] = $patterns[$strKey];
         }
 
-        return $new_patterns;
+        return $newPatterns;
     }
 
     /**
      * Generate patterns dengan nilai support.
      */
-    protected function generatePatternList(): array
-    {
-        $sv=[];
-        $patterns = [];
-        $items = array_keys($this->frequent);
-        // print_r($this->frequent);
-        // Mengecek apakah dalam conditional fptree, maka suffix adalah dirinya sendiri.
-        // if ($this->root->value == null) {
-        //     $suffix_value = [];
-        // } else {
-        //     $suffix_value = [$this->root->value];
-        //     sort($suffix_value);
-        //     $patterns[implode(',', $suffix_value)] = $this->root->count;
-        // }
-        // dd(($this->root->value !== null));
-
-        if ($this->root->value !== null) {
-            $patterns[$this->root->value] = $this->root->count;
-        }
-
-        for ($i = 1; $i <= count($items); $i++) {
-            foreach (FPGrowth::combinations($items, $i) as $subset) {
-                // $pattern = array_merge($subset, $suffix_value);
-                $pattern = $this->root->value !== null ? array_merge($subset, [$this->root->value]) : $subset;
-                sort($pattern);
-                $min = PHP_INT_MAX;
-                foreach ($subset as $x) {
-                    if ($this->frequent[$x] < $min) {
-                        $min = $this->frequent[$x];
-                    }
-                }
-                $patterns[implode(',', $pattern)] = $min;
-                // array_push($sv, $suffix_value);
-                // print_r($min);
-            }
-                // dd($patterns);
-        }
-        //  dd($patterns);
-
-        // dd($this->frequent);
-        return $patterns;
-    }
-
-    // protected function generatePatternList(): array
+    // protected function generatePatternList()
     // {
+    //     $sv=[];
     //     $patterns = [];
     //     $items = array_keys($this->frequent);
-    //     print_r($this->frequent);
-
-    //     // If we are in a conditional tree, the suffix is a pattern on its own.
-    //     if ($this->root->value !== null) {
-    //         $patterns[$this->root->value] = $this->root->count;
+    //     // print_r($this->frequent);
+    //     // Mengecek apakah dalam conditional fptree, maka suffix adalah dirinya sendiri.
+    //     if ($this->root->value == null) {
+    //         $suffix_value = [];
+    //     } else {
+    //         $suffix_value = [$this->root->value];
+    //         sort($suffix_value);
+    //         $patterns[implode(',', $suffix_value)] = $this->root->count;
     //     }
 
     //     for ($i = 1; $i <= count($items); $i++) {
-    //         $combinations = new Combinations($items,$i);
-    //         foreach (FPGrowth::combinations($items, $i as $subset) {
-    //             $pattern = $this->root->value !== null ? array_merge($subset, [$this->root->value]) : $subset;
+    //         foreach (FPGrowth::combinations($items, $i) as $subset) {
+    //             $pattern = array_merge($subset, $suffix_value);
     //             sort($pattern);
     //             $min = PHP_INT_MAX;
-    //             /** @var string $x */
     //             foreach ($subset as $x) {
     //                 if ($this->frequent[$x] < $min) {
     //                     $min = $this->frequent[$x];
     //                 }
     //             }
     //             $patterns[implode(',', $pattern)] = $min;
+    //             array_push($sv, $suffix_value);
+    //             // print_r($patterns);
+    //             // print_r($min);
     //         }
     //     }
+    //     //  dd($suffix_value);
     //     return $patterns;
     // }
+    protected function generatePatternList(): array
+    {
+        $patterns = [];
+        $items = array_keys($this->frequent);
+        print_r($this->frequent);
+
+        // If we are in a conditional tree, the suffix is a pattern on its own.
+        if ($this->root->value !== null) {
+            $patterns[$this->root->value] = $this->root->count;
+        }
+
+        for ($i = 1; $i <= count($items); $i++) {
+            $combinations = new Combinations($items,$i);
+            foreach ($combinations->generator() as $subset) {
+                $pattern = $this->root->value !== null ? array_merge($subset, [$this->root->value]) : $subset;
+                sort($pattern);
+                $min = PHP_INT_MAX;
+                /** @var string $x */
+                foreach ($subset as $x) {
+                    if ($this->frequent[$x] < $min) {
+                        $min = $this->frequent[$x];
+                    }
+                }
+                $patterns[implode(',', $pattern)] = $min;
+            }
+        }
+        return $patterns;
+    }
 
     /**
      * Generate subtree dan cari PATTERN BASE !!!!!!!!!!!
@@ -448,6 +464,7 @@ class FPTree extends stdClass
     //         $conditional_tree_input = [];
     //         $node = $this->headers[$item];
     //         // Melihat tree untuk beberapa item
+    //         // dd($node);
     //         while (($node != null)) {
     //             $suffixes[] = $node;
     //             $node = $node->link;
@@ -498,27 +515,23 @@ class FPTree extends stdClass
     //     // dd($patterns);
     //     return $patterns;
     // }
-
     protected function mineSubTrees(int $threshold): array
     {
         $patterns = [];
-        $mining_order = $this->frequent;
-        asort($mining_order);
-        $mining_order = array_keys($mining_order);
-        // dd($mining_order);
+        $miningOrder = $this->frequent;
+        // dd($this->frequent);
+        asort($miningOrder);
+        $miningOrder = array_keys($miningOrder);
         // Get items in tree in reverse order of occurrences.
-
-        foreach ($mining_order as $item) {
-            // dd($item);
+        foreach ($miningOrder as $item) {
             /** @var FPNode[] $suffixes */
             $suffixes = [];
-            $conditional_tree_input = [];
+            $conditionalTreeInput = [];
             $node = $this->headers[$item];
 
             // Follow node links to get a list of all occurrences of a certain item.
             while ($node !== null) {
                 $suffixes[] = $node;
-                // print_r($suffixes);
                 $node = $node->link;
             }
 
@@ -529,50 +542,33 @@ class FPTree extends stdClass
                 $parent = $suffix->parent;
                 while ($parent->parent !== null) {
                     $path[] = $parent->value;
-                    // dd($path);
                     $parent = $parent->parent;
                 }
-
                 for ($i = 0; $i < $frequency; $i++) {
-                    $conditional_tree_input[] = array_reverse($path);
+                    $conditionalTreeInput[] = $path;
                 }
-
             }
-
-            //  MELIHAT KONDISIONAL PATTERN BASE YG AKAN DIJADIKAN SEBAGAI TRANSAKSI PADA SUBTREE
-            $conditional_tree_input = array_filter($conditional_tree_input);
-            // print_r($conditional_tree_input);
-
-
-
-
 
             //  dd($frequency);
 
-            // SUBTREE (TREE DARI CONDITIONAL FP-TREE)!!!!!!!!!!!!!!!!!
             // Now we have the input for a subtree, so construct it and grab the patterns.
-            $subtree = new FPTree($conditional_tree_input, $threshold, $item, $this->frequent[$item]);
-            // print_r($subtree);
-
+            $subtree = new FPTree($conditionalTreeInput, $threshold, $item, $this->frequent[$item]);
             $subtreePatterns = $subtree->minePatterns($threshold);
-            // print_r($subtreePatterns);
+            // print_r($conditionalTreeInput);
 
 
             // Insert subtree patterns into main patterns dictionary.
             foreach (array_keys($subtreePatterns) as $pattern) {
-                // print_r($subtreePatterns);
                 if (in_array($pattern, $patterns)) {
-
                     $patterns[$pattern] += $subtreePatterns[$pattern];
                 } else {
                     $patterns[$pattern] = $subtreePatterns[$pattern];
                 }
             }
-
-
         }
+        // print_r($patterns);
+        // dd($patterns);
 
-        // print_r($mining_order);
         return $patterns;
     }
 }

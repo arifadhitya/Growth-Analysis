@@ -86,39 +86,52 @@ class AnalisisController extends Controller
 
         $fpgrowth = new FPGrowth($minSupp, $minConf);
         $transactions = [
-            // ['I1', 'I2', 'I5'],
-            // ['I2', 'I4'],
-            // ['I2', 'I3'],
-            // ['I1', 'I2', 'I4'],
-            // ['I1', 'I3'],
-            // ['I2', 'I3'],
-            // ['I1', 'I3'],
-            // ['I1', 'I2', 'I3', 'I5'],
-            // ['I1', 'I2', 'I3'],
+            ['I1', 'I2', 'I5'],
+            ['I2', 'I4'],
+            ['I2', 'I3'],
+            ['I1', 'I2', 'I4'],
+            ['I1', 'I3'],
+            ['I2', 'I3'],
+            ['I1', 'I3'],
+            ['I1', 'I2', 'I3', 'I5'],
+            ['I1', 'I2', 'I3']
 
 
 
-            ['M', 'O', 'N', 'K', 'E', 'Y'],
-            ['D', 'O', 'N', 'K', 'E', 'Y'],
-            ['M', 'A', 'K', 'E'],
-            ['M', 'U', 'C', 'K', 'Y'],
-            ['C', 'O', 'O', 'K', 'I', 'E']
+            // ['M', 'O', 'N', 'K', 'E', 'Y'],
+            // ['D', 'O', 'N', 'K', 'E', 'Y'],
+            // ['M', 'A', 'K', 'E'],
+            // ['M', 'U', 'C', 'K', 'Y'],
+            // ['C', 'O', 'O', 'K', 'I', 'E']
+        ];
+
+        $transactionsB = [
+            ['P3', 'P1', 'P2'],
+            ['P4', 'P10', 'P11', 'P5', 'P6', 'P7', 'P8', 'P9'],
+            ['P13', 'P12', 'P14', 'P15'],
+            ['P16', 'P17', 'P19', 'P18', 'P20'],
+            ['P4', 'P23', 'P21', 'P26', 'P22', 'P24', 'P25'],
+            ['P27', 'P13', 'P28', 'P30', 'P29', 'P31', 'P32'],
+            ['P34', 'P35', 'P37', 'P38', 'P33', 'P36'],
+            ['P30', 'P44', 'P46', 'P39', 'P40', 'P41', 'P42', 'P43', 'P45', 'P47'],
+            ['P50', 'P44', 'P51', 'P48', 'P49', 'P52', 'P53'],
+            ['P3'],
+
         ];
         foreach ($transactions as $transaction => $value){
             if($transactions[$transaction]){
                 $transactions[$transaction] = array_unique($transactions[$transaction]);
             }
         }
-
-
-        //$fpgrowth->run($transactions);
-        $fpgrowth->run($transaksiPembelian);
+        $fpgrowth->run($transactions);
+        // $fpgrowth->run($transaksiPembelian);
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
         $columns = array_column($rules, 2);
         array_multisort($columns, SORT_DESC, $rules);
 
 
+        dd($rules);
 
         foreach($rules as $index=>$aturan){
             foreach($aturan as $indexX=>$aturanX){

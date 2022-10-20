@@ -19,7 +19,7 @@
         <th>Kode Pegawai</th>
         <th>Nama Pegawai</th>
         <th>Username</th>
-        <th>Profil</th>
+        {{-- <th>Profil</th> --}}
         <th>Tindakan</th>
     </tr>
     @foreach($datauser as $ur)
@@ -28,7 +28,7 @@
 		<td>{{$ur->kodepegawai}}</td>
 		<td>{{$ur->namapegawai}}</td>
         <td>{{$ur->username}}</td>
-        <td><img src="{{ asset('storage/' . $ur->profil) }}" class="profile-pic"></td>
+        {{-- <td><img src="{{ asset('storage/' . $ur->profil) }}" class="profile-pic"></td> --}}
 		<td>
 			<form action="/staf/{{ $ur->id }}/edit" method="post" class="d-inline">
                 @csrf

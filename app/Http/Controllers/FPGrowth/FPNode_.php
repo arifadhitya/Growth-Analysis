@@ -1,11 +1,10 @@
 <?php
 
 declare(strict_types=1);
-namespace App\Http\Controllers\FPGrowth;
 
-use stdClass;
+namespace EnzoMC\PhpFPGrowth;
 
-class FPNode extends stdClass
+class FPNode
 {
     public $value;
     public int $count;
@@ -13,10 +12,14 @@ class FPNode extends stdClass
     public ?FPNode $link = null;
     /** @var FPNode[] */
     public array $children = [];
+
     /**
-     * Membuat node
+     * Create the node.
+     * @param mixed $value
+     * @param int $count
+     * @param FPNode|null $parent
      */
-    function __construct($value, int $count, ?FPNode $parent)
+    public function __construct($value, int $count, ?FPNode $parent)
     {
         $this->value = $value;
         $this->count = $count;
@@ -26,12 +29,14 @@ class FPNode extends stdClass
     }
 
     /**
-     * cek jika sudah punya child node
+     * Check if node has a particular child node.
+     * @param mixed $value
+     * @return bool
      */
-    function has_child($value)
+    public function hasChild($value): bool
     {
         foreach ($this->children as $node) {
-            if (($node->value == $value)) {
+            if ($node->value == $value) {
                 return true;
             }
         }
@@ -39,12 +44,14 @@ class FPNode extends stdClass
     }
 
     /**
-     * kembalikan child node jika ada
+     * Return a child node with a particular value.
+     * @param $value
+     * @return FPNode|null
      */
-    function get_child($value): ?FPNode
+    public function getChild($value): ?FPNode
     {
         foreach ($this->children as $node) {
-            if (($node->value == $value)) {
+            if ($node->value == $value) {
                 return $node;
             }
         }
@@ -52,9 +59,11 @@ class FPNode extends stdClass
     }
 
     /**
-     * tambahkan node sebagai child
+     * Add a node as a child node.
+     * @param $value
+     * @return FPNode
      */
-    function add_child($value): FPNode
+    public function addChild($value): FPNode
     {
         $child = new FPNode($value, 1, $this);
         $this->children[] = $child;

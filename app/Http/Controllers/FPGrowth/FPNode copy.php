@@ -1,22 +1,16 @@
 <?php
 
-declare(strict_types=1);
+
 namespace App\Http\Controllers\FPGrowth;
 
 use stdClass;
 
 class FPNode extends stdClass
 {
-    public $value;
-    public int $count;
-    public ?FPNode $parent = null;
-    public ?FPNode $link = null;
-    /** @var FPNode[] */
-    public array $children = [];
     /**
      * Membuat node
      */
-    function __construct($value, int $count, ?FPNode $parent)
+    function __construct($value, $count, $parent)
     {
         $this->value = $value;
         $this->count = $count;
@@ -41,20 +35,20 @@ class FPNode extends stdClass
     /**
      * kembalikan child node jika ada
      */
-    function get_child($value): ?FPNode
+    function get_child($value)
     {
         foreach ($this->children as $node) {
             if (($node->value == $value)) {
                 return $node;
             }
         }
-        return null;
+        return;
     }
 
     /**
      * tambahkan node sebagai child
      */
-    function add_child($value): FPNode
+    function add_child($value)
     {
         $child = new FPNode($value, 1, $this);
         $this->children[] = $child;

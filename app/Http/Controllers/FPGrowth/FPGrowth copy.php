@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 namespace App\Http\Controllers\FPGrowth;
 
 class FPGrowth
@@ -14,7 +14,7 @@ class FPGrowth
     /**
      * @return mixed
      */
-    public function getSupport(): int
+    public function getSupport()
     {
         return $this->support;
     }
@@ -22,7 +22,7 @@ class FPGrowth
     /**
      * @param mixed $support
      */
-    public function setSupport($support): self
+    public function setSupport($support)
     {
         $this->support = $support;
         return $this;
@@ -31,7 +31,7 @@ class FPGrowth
     /**
      * @return mixed
      */
-    public function getConfidence(): float
+    public function getConfidence()
     {
         return $this->confidence;
     }
@@ -39,7 +39,7 @@ class FPGrowth
     /**
      * @param mixed $confidence
      */
-    public function setConfidence(float $confidence): self
+    public function setConfidence($confidence)
     {
         $this->confidence = $confidence;
         return $this;
@@ -66,52 +66,30 @@ class FPGrowth
      * @param $support 1, 2, 3 ...
      * @param $confidence 0 ... 1
      */
-    public function __construct(int $support, float $confidence)
+    public function __construct($support, $confidence)
     {
-        $this->setSupport($support);
-        $this->setConfidence($confidence);
+        $this->support = $support;
+        $this->confidence = $confidence;
     }
 
     /**
      * Do algorithm
      * @param $transactions
      */
-    // public function run($transactions)
-    // {
-    //     $this->patterns = $this->findFrequentPatterns($transactions, $this->support);
-    //     $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
-    // }
-
-    public function run(array $transactions)
+    public function run($transactions)
     {
-        // dd($transactions);
-        $this->patterns = $this->findFrequentPatterns($transactions);
+        $this->patterns = $this->findFrequentPatterns($transactions, $this->support);
         $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
     }
 
-    // protected function findFrequentPatterns($transactions, $support_threshold)
-    // {
-    //     $tree = new FPTree($transactions, $support_threshold, null, null);
-    //     return $tree->minePatterns($support_threshold);
-    // }
-
-    protected function findFrequentPatterns(array $transactions)
+    protected function findFrequentPatterns($transactions, $support_threshold)
     {
-        $tree = new FPTree($transactions, $this->support, null, 0);
-        $miners = $tree->minePatterns($this->support);
-        $prekuen = $tree->frequent;
-        foreach ($prekuen as $key => $value){
-            if(!in_array($key, $miners)){
-                $miners[$key] = $value;
-            }
-        }
-        // dd($miners);
-        return $miners;
+        $tree = new FPTree($transactions, $support_threshold, null, null);
+        return $tree->minePatterns($support_threshold);
     }
 
-    protected function generateAssociationRules(array $patterns, $confidence_threshold): array
+    protected function generateAssociationRules($patterns, $confidence_threshold)
     {
-        // dd($patterns);
         $rules = [];
         foreach (array_keys($patterns) as $itemsetStr) {
             $itemset = explode(',', $itemsetStr);
@@ -133,8 +111,6 @@ class FPGrowth
                 }
             }
         }
-                // dd($rules);
-
         return $rules;
 
         // $rules = [];

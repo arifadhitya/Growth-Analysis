@@ -12,6 +12,16 @@
         {{ auth()->user()->namapegawai }}
     </h1>
 </div>
+<h3>Ketentuan</h3>
+<ul>
+    <li>Data penjualan disiapkan terlebih dahulu.</li>
+    <li>Data produk, Data Transaksi Umum, dan Data Transaksi Detail memiliki keterikatan.</li>
+    <li>Setiap Data Transaksi Detail harus memiliki kode transaksi dari Data Transaksi Umum.</li>
+    <li>Setiap Data Transaksi Umum & Data Transaksi Detail harus memiliki kode produk dari Data Produk.</li>
+    <li>Setiap data diupload secara terpisah dalam masing-masing file dengan hanya 1 sheet.</li>
+    <li>Urutan upload data baru adalah; 1. Data Produk, 2. Data Transaksi Umum, 3. Data Transaksi Detail.</li>
+</ul>
+
 
 <div class="widget">
     <a href="https://time.is/Kendari,_North_Kalimantan" id="time_is_link" rel="nofollow" style="font-size:36px;color:#548459; text-decoration:none">Waktu di Kendari:</a>

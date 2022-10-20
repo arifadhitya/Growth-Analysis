@@ -47,7 +47,7 @@
                 </div>
                 @enderror
             </div>
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label for="profil" class="form-label">Pilih file foto profil</label>
                 <input class="form-control @error('profil') is-invalid @enderror" type="file" id="profil" name="profil">
                 @error('profil')
@@ -55,7 +55,7 @@
                     {{ $message }}
                 </div>
                 @enderror
-            </div>
+            </div> --}}
             <a href="/staf" class="btn btn-rv" role="button">Batal</a>
             <button type="submit" class="btn btn-rvr">Simpan</button>
         </form>
