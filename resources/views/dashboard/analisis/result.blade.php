@@ -25,7 +25,7 @@
                     <div class="row-2 ms-2 fs-3 fw-light">
                         <span class="fw-bold">{{ round((float)$rls[2] * 100 ) . '%' }}</span>
                         {{-- <span class="fw-bold">{{ $rls[3]  . '/' . $rls[4] }} </span> --}}
-                        <p class="fs-6 mb-0 txt-gray">Pelanggan</p>
+                        <p class="fs-6 mb-0 txt-gray">Transaksi</p>
                         {{-- {{ $rls[2] }} --}}
                         {{-- @if ($rls[2] > 1)
                         {{ 1 }}
@@ -41,19 +41,31 @@
                         </div>
                         <div class="row fw-bold">
                             @foreach ($rls[0] as $r)
-                            {{ $namaProduk[$r] }} <br>
+                            {{
+                            $namaProduk[$r]
+                            }} <br>
                             @endforeach
+                            {{-- @foreach ($rls[3] as $f)
+                                {{ $f }}
+                            <br>
+                            @endforeach --}}
                         </div>
                     </div>
                     <div class="row">
                         <div class="row fw-light txt-gray">
-                            akan membeli
+                            maka membeli
                         </div>
                         <div class="row fw-bold">
                             @foreach ($rls[1] as $r)
-                            {{ $namaProduk[$r] }}
+                            {{
+                            $namaProduk[$r]
+                            }}
                             <br>
                             @endforeach
+                            {{-- @foreach ($rls[3] as $f)
+                                {{ $f }}
+                            <br>
+                            @endforeach --}}
                         </div>
                     </div>
                 </div>

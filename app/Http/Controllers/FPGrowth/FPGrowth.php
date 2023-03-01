@@ -6,7 +6,7 @@ class FPGrowth
 {
     // protected $support = 0;
     // protected $confidence = 0;
-
+    private $transactions;
     private $patterns;
     private $rules;
     private $frequent;
@@ -42,6 +42,12 @@ class FPGrowth
     public function setConfidence(float $confidence): self
     {
         $this->confidence = $confidence;
+        return $this;
+    }
+
+    public function setTransaction($transactions): self
+    {
+        $this->transactions = $transactions;
         return $this;
     }
 
@@ -85,6 +91,7 @@ class FPGrowth
     public function run(array $transactions)
     {
         // dd($transactions);
+        $this->setTransaction($transactions);
         $this->patterns = $this->findFrequentPatterns($transactions);
         $this->rules = $this->generateAssociationRules($this->patterns, $this->confidence);
     }
@@ -111,9 +118,13 @@ class FPGrowth
 
     protected function generateAssociationRules(array $patterns, $confidence_threshold): array
     {
-        // dd($patterns);
+        implode($patterns);
         $rules = [];
         foreach (array_keys($patterns) as $itemsetStr) {
+            if(is_int($itemsetStr)){
+                $itemsetStr = strval($itemsetStr);
+            }
+            // dd($patterns);
             $itemset = explode(',', $itemsetStr);
             $upper_support = $patterns[$itemsetStr];
             for ($i = 1; $i < count($itemset); $i++) {
@@ -126,8 +137,13 @@ class FPGrowth
                     if (isset($patterns[$antecedentStr])) {
                         $lower_support = $patterns[$antecedentStr];
                         $confidence = (floatval($upper_support) / $lower_support);
+                        $lift = (floatval($confidence) / ($patterns[$consequentStr]/count($this->transactions)));
+                        $B = $patterns[$consequentStr]/count($this->transactions) . "";
+                        $sLift = $lift . "";
                         if ($confidence >= $confidence_threshold) {
-                            $rules[] = [$antecedentStr, $consequentStr, $confidence];
+                            // $rules[] = [$antecedentStr, $consequentStr, $confidence, strval($patterns[$consequentStr])];
+                            $rules[] = [$antecedentStr, $consequentStr, $confidence, $B];
+                            // $rules[] = [$antecedentStr, $consequentStr, $confidence, $lift];
                         }
                     }
                 }

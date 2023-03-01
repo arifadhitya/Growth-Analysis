@@ -19,8 +19,8 @@ class FPTree extends stdClass
         // dd($root_count);
 
         $this->frequent = $this->findFrequentItems($transactions, $threshold);
-        $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
-        // dd($transactions);
+        // $this->transactionsX = self::pruneTransaction($transactions, $this->frequent);
+        // dd($this->frequent);
         // $this->headers = self::buildHeaderTable($this->frequent);
         $this->headers = $this->buildHeaderTable();
         // $this->root = $this->buildFPTree($this->transactionsX, $root_value, $root_count, $this->frequent, $this->headers);
@@ -39,6 +39,7 @@ class FPTree extends stdClass
         $items = [];
         foreach ($transactions as $transaction) {
             foreach ($transaction as $item) {
+                // $item = ;
                 if (array_key_exists($item, $items)) {
                     $items[$item] += 1;
                 } else {
@@ -47,14 +48,28 @@ class FPTree extends stdClass
             }
         }
 
+        // foreach(array_keys($items) as $item){
+        //     if (is_int($item)){
+        //         $item
+        //     }
+        // }
+
         // hilangkan jika frekuensi produk kurang dari minimum support dan urutkan
         foreach (array_keys($items) as $key) {
             if (($items[$key] < $threshold)) {
                 unset($items[$key]);
             }
+            // if (is_int($key)){
+            //     $items = strval($items);
+            // }
         }
+
+
+
+        // krsort($items);
+        // arsort($items);
         arsort($items);
-        //  dd($items);
+        // dd($items);
         return $items;
     }
 
@@ -62,26 +77,26 @@ class FPTree extends stdClass
     /*
         Menghapus transaksi yang hanya mengandung 1 jenis produk.
     */
-    protected static function pruneTransaction($transactions, $frequent)
-    {
-        // dd($transactions);
-        $transactionsX = [];
-        foreach ($transactions as $transaction) {
-            $y = [];
-            foreach ($transaction as $item) {
-                if (isset($frequent[$item])) {
-                    $y[] = $item;
-                }
-            }
-            // $transactionsX[]=$y;
-            if(count($y)>1){
-                $transactionsX[]=$y;
-            }
+    // protected static function pruneTransaction($transactions, $frequent)
+    // {
+    //     // dd($transactions);
+    //     $transactionsX = [];
+    //     foreach ($transactions as $transaction) {
+    //         $y = [];
+    //         foreach ($transaction as $item) {
+    //             if (isset($frequent[$item])) {
+    //                 $y[] = $item;
+    //             }
+    //         }
+    //         // $transactionsX[]=$y;
+    //         if(count($y)>1){
+    //             $transactionsX[]=$y;
+    //         }
 
-        }
-        // dd($transactionsX);
-        return $transactionsX;
-    }
+    //     }
+    //     // dd($transactionsX);
+    //     return $transactionsX;
+    // }
 
 
     /**
@@ -168,8 +183,8 @@ class FPTree extends stdClass
     {
         $root = new FPNode($root_value, $root_count, null);
         arsort($frequent);
-        // dd($transactions);
         foreach ($transactions as $transaction) {
+            sort($transaction);
             $sorted_items = [];
             foreach ($transaction as $item) {
                 if (isset($frequent[$item])) {
@@ -177,6 +192,7 @@ class FPTree extends stdClass
                 }
             }
 
+            // print_r($transaction);
             usort($sorted_items, function ($a, $b) use ($frequent) {
                 return $frequent[$b] <=> $frequent[$a];
             });
@@ -348,7 +364,11 @@ class FPTree extends stdClass
 
         // We are in a conditional tree.
         $new_patterns = [];
+        // print_r(array_keys($patterns));
         foreach (array_keys($patterns) as $strKey) {
+            if (is_int($strKey)){
+                $strKey = strval($strKey);
+            }
             $key = explode(',', $strKey);
             $key[] = $this->root->value;
             sort($key);

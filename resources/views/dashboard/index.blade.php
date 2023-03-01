@@ -23,7 +23,8 @@
 </ul>
 
 
-<div class="widget">
+
+<div class="widget" >
     <a href="https://time.is/Kendari,_North_Kalimantan" id="time_is_link" rel="nofollow" style="font-size:36px;color:#548459; text-decoration:none">Waktu di Kendari:</a>
     <span id="Kendari__North_Kalimantan_z42b" style="font-size:36px;color:#548459"></span>
     <script src="//widget.time.is/id.js"></script>

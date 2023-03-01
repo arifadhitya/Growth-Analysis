@@ -25,27 +25,31 @@ class AnalisisController extends Controller
     public function fpgrowth(Request $request)
     {
         $credentials = $request->validate([
-            'jangkaWaktuAnalisis1' => 'required',
-            'jangkaWaktuAnalisis2' => 'required',
+            'jangkaWaktuAnalisis1' => 'required|date_format:"d/m/Y"',
+            'jangkaWaktuAnalisis2' => 'required|date_format:"d/m/Y"',
             'inputMinSupport' => 'required',
-            'inputMinConf' => 'required',
+            'inputMinConf' => 'required|numeric|max:1',
         ]);
 
-        $newDateFormat1 = strtotime($request['jangkaWaktuAnalisis1']);
-        $newDateFormat2 = strtotime($request['jangkaWaktuAnalisis2']);
-        $minSupp = $request['inputMinSupport'];
-        $minConf = $request['inputMinConf'];
 
-        $request['jangkaWaktuAnalisis1'] = date('Y-m-d', $newDateFormat1);
-        $request['jangkaWaktuAnalisis2'] = date('Y-m-d', $newDateFormat2);
+        // $newDateFormat1 = strtotime($credentials['jangkaWaktuAnalisis1']);
+        $newDateFormat1 = Carbon::createFromFormat('d/m/Y', $credentials['jangkaWaktuAnalisis1'])->format('Y-m-d');
+        // $newDateFormat2 = strtotime($credentials['jangkaWaktuAnalisis2']);
+        $newDateFormat2 = Carbon::createFromFormat('d/m/Y', $credentials['jangkaWaktuAnalisis2'])->format('Y-m-d');
+        $minSupp = $credentials['inputMinSupport'];
+        $minConf = $credentials['inputMinConf'];
 
+        // $startDate = date('Y-m-d', $newDateFormat1);
+        // $endDate = date('Y-m-d', $newDateFormat2);
+
+        // dd($credentials);
         $transaksiPembelian=array();
         $namaProduk=array();
 
         // Mengambil record antara jangka waktu
         $getRecordRange = DB::table('transaksis')->whereBetween('tanggaljual', [
-            $request['jangkaWaktuAnalisis1'],
-            Carbon::parse($request['jangkaWaktuAnalisis2'])->endOfDay(),
+            $newDateFormat1,
+            Carbon::parse($newDateFormat2)->endOfDay(),
         ])->get();
 
         // Memasukkan kodeproduk ke array kodetransaksi
@@ -59,7 +63,7 @@ class AnalisisController extends Controller
                 $produk = DB::table('produks')->where('kodeproduk', $value2->kodeproduk)->first();
                 $namaProduk[$value2->kodeproduk] = $produk->namaproduk;
                 array_push($y, $produk->namaproduk);
-                array_push($x, $value2->kodeproduk);
+                array_push($x, $value2->kodeproduk); // TAMBAHKAN AKHIRAN a BIAR JADI STRING DAN BISA
                 $transaksiPembelian[$transaksi1] = $x;
             }
             if(isset($transaksiPembelian[$transaksi1])){
@@ -67,6 +71,7 @@ class AnalisisController extends Controller
             }
 
         }
+        // dd($transaksiPembelian);
 
         // foreach ($getRecordRange as $transaksi => $value) {
         //     $dettran = DB::table('pembelians')->where('kodetransaksi', $value->kodetransaksi)->get();
@@ -123,15 +128,16 @@ class AnalisisController extends Controller
                 $transactions[$transaction] = array_unique($transactions[$transaction]);
             }
         }
-        $fpgrowth->run($transactions);
-        // $fpgrowth->run($transaksiPembelian);
+        // dd($transaksiPembelian);
+        // $fpgrowth->run($transactions);
+        $fpgrowth->run($transaksiPembelian);
         $patterns = $fpgrowth->getPatterns();
         $rules = $fpgrowth->getRules();
         $columns = array_column($rules, 2);
         array_multisort($columns, SORT_DESC, $rules);
 
 
-        dd($rules);
+        // dd($patterns);
 
         foreach($rules as $index=>$aturan){
             foreach($aturan as $indexX=>$aturanX){
@@ -154,8 +160,8 @@ class AnalisisController extends Controller
             'rules' => $rules,
             'minSupp' => $minSupp,
             'minConf' => $minConf,
-            'newDateFormat1' => $newDateFormat1,
-            'newDateFormat2' => $newDateFormat2,
+            'newDateFormat1' => strtotime($newDateFormat1),
+            'newDateFormat2' => strtotime($newDateFormat2),
         ]);
     }
 }
